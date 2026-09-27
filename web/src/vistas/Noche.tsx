@@ -52,6 +52,17 @@ export function Noche({ params }: { params: string[] }) {
   );
 }
 
+/**
+ * Duración de la tarea. Una noche en curso puede llegar con `fin` ausente (null):
+ * sin fecha de fin no hay duración, se muestra "en curso…" en vez de "NaN s".
+ */
+function duracionDe(r: ResultadoTarea): string {
+  const inicio = Date.parse(r.inicio);
+  const fin = r.fin ? Date.parse(r.fin) : NaN;
+  if (!Number.isFinite(inicio) || !Number.isFinite(fin)) return "en curso…";
+  return duracion(fin - inicio);
+}
+
 function Resultado({ r }: { r: ResultadoTarea }) {
   return (
     <li className="tarjeta" data-testid="resultado">
@@ -63,7 +74,7 @@ function Resultado({ r }: { r: ResultadoTarea }) {
       </div>
       <p className="titulo-tarea">{r.titulo}</p>
       <p className="resumen">
-        {duracion(Date.parse(r.fin) - Date.parse(r.inicio))} · {r.turnos} turnos · {r.tokens.toLocaleString("es-AR")} tokens
+        {duracionDe(r)} · {r.turnos} turnos · {r.tokens.toLocaleString("es-AR")} tokens
       </p>
       {r.pr && (
         <p className="detalle-extra">
