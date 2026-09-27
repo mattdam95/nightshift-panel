@@ -4,6 +4,7 @@ Pages active:                             600000.
 Pages inactive:                           120000.
 Pages speculative:                          3000.
 Pages throttled:                               0.
+Pages wired down:                         200000.
 Pages purgeable:                            1000.
 "Translation faults":                   99999999.
 Pages copy-on-write:                      500000.
