@@ -1,0 +1,241 @@
+/* Mobile-first. Oscuro por defecto (se usa de noche); claro si el sistema lo pide. */
+:root {
+  --fondo: #0d1117;
+  --tarjeta: #161b22;
+  --borde: #30363d;
+  --texto: #e6edf3;
+  --sub: #8b949e;
+  --acento: #e3b341;
+  --ok: #3fb950;
+  --error: #f85149;
+  --pc: #58a6ff;
+  --mac: #bc8cff;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --fondo: #f6f8fa;
+    --tarjeta: #ffffff;
+    --borde: #d0d7de;
+    --texto: #1f2328;
+    --sub: #59636e;
+    --acento: #9a6700;
+    --ok: #1a7f37;
+    --error: #cf222e;
+    --pc: #0969da;
+    --mac: #8250df;
+    color-scheme: light;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font:
+    16px/1.4 -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+a {
+  color: var(--pc);
+}
+h1 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+h2 {
+  font-size: 0.95rem;
+  margin: 1rem 0 0.4rem;
+  color: var(--sub);
+}
+.sub {
+  color: var(--sub);
+  font-size: 0.85em;
+}
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+}
+
+.app {
+  min-height: 100dvh;
+  padding: env(safe-area-inset-top) 0 calc(64px + env(safe-area-inset-bottom));
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.vista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 16px;
+}
+.cabecera {
+  padding-top: 8px;
+}
+.vacio {
+  color: var(--sub);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.estado-conexion {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  background: var(--fondo);
+  border-bottom: 1px solid var(--borde);
+}
+.punto {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sub);
+}
+.punto.en-vivo {
+  background: var(--ok);
+}
+.punto.reconectando {
+  background: var(--error);
+}
+
+.tarjeta {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 12px;
+  overflow-wrap: anywhere;
+}
+.tarjeta.destacada {
+  border-color: var(--acento);
+}
+.fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.titulo-tarea {
+  margin: 4px 0 8px;
+}
+.chip {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.chip.pc {
+  color: var(--pc);
+}
+.chip.mac {
+  color: var(--mac);
+}
+
+.etapas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+.etapas li {
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: var(--sub);
+  border: 1px solid var(--borde);
+}
+.etapas li.hecha {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+.etapas li.actual {
+  color: var(--fondo);
+  background: var(--acento);
+  border-color: var(--acento);
+  font-weight: 600;
+}
+
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 8px 0;
+}
+@media (min-width: 560px) {
+  .numeros {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.numeros dt {
+  font-size: 0.72rem;
+  color: var(--sub);
+}
+.numeros dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.lista-simple,
+.feed {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.lista-simple li,
+.feed li {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--borde);
+}
+.lista-simple li:last-child,
+.feed li:last-child {
+  border-bottom: 0;
+}
+.feed {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.feed li.error {
+  color: var(--error);
+}
+
+.pestanas {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--tarjeta);
+  border-top: 1px solid var(--borde);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pestanas a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 56px;
+  justify-content: center;
+  font-size: 0.72rem;
+  color: var(--sub);
+  text-decoration: none;
+}
+.pestanas a[aria-current="page"] {
+  color: var(--acento);
+}

@@ -1,0 +1,24 @@
+{
+  "ts": "2026-09-27T02:14:10Z",
+  "corriendo": true,
+  "pausado": false,
+  "actual": {
+    "tarea": "demo/panel#5",
+    "titulo": "Vista de la cola",
+    "etapa": "implementacion",
+    "inicio": "2026-09-27T01:03:43.000Z",
+    "contenedor": "agent-demo_panel-5"
+  },
+  "ultimaNoche": "2026-09-27",
+  "archivos": [],
+  "gpu": {
+    "tempMiliC": 68000,
+    "potenciaMicroW": 187000000,
+    "vramUsadaB": 16839708672,
+    "vramTotalB": 17163091968
+  },
+  "llm": {
+    "salud": 200,
+    "metricas": "# Ejemplo sintético con los nombres reales de llama-server (--metrics). Valores inventados.\n# HELP llamacpp:prompt_tokens_total Number of prompt tokens processed.\n# TYPE llamacpp:prompt_tokens_total counter\nllamacpp:prompt_tokens_total 70000\n# TYPE llamacpp:prompt_seconds_total counter\nllamacpp:prompt_seconds_total 160\n# TYPE llamacpp:tokens_predicted_total counter\nllamacpp:tokens_predicted_total 80000\n# TYPE llamacpp:tokens_predicted_seconds_total counter\nllamacpp:tokens_predicted_seconds_total 2700\n# TYPE llamacpp:prompt_tokens_seconds gauge\nllamacpp:prompt_tokens_seconds 0\n# TYPE llamacpp:predicted_tokens_seconds gauge\nllamacpp:predicted_tokens_seconds 28.5\n# TYPE llamacpp:requests_processing gauge\nllamacpp:requests_processing 1\n# TYPE llamacpp:requests_deferred gauge\nllamacpp:requests_deferred 0\n"
+  }
+}

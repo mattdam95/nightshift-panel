@@ -1,0 +1,27 @@
+[
+  {
+    "tarea": "demo/panel#3",
+    "repo": "demo/panel",
+    "numero": 3,
+    "titulo": "Reloj de la noche",
+    "estado": "lista",
+    "motivo": "verificación OK y el revisor aprueba",
+    "inicio": "2026-09-27T01:00:21.000Z",
+    "fin": "2026-09-27T01:03:36.000Z",
+    "turnos": 5,
+    "tokens": 1110,
+    "llamadas": 5,
+    "rondasAgente": 1,
+    "testsAceptacion": [
+      "src/reloj.test.ts"
+    ],
+    "avisos": [],
+    "pr": "https://github.com/demo/panel/pull/4",
+    "rama": "agent/3-reloj",
+    "revision": {
+      "estado": "aprobar",
+      "problemas": [],
+      "rondas": 1
+    }
+  }
+]

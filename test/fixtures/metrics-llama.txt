@@ -1,0 +1,18 @@
+# Ejemplo sintético con los nombres reales de llama-server (--metrics). Valores inventados.
+# HELP llamacpp:prompt_tokens_total Number of prompt tokens processed.
+# TYPE llamacpp:prompt_tokens_total counter
+llamacpp:prompt_tokens_total 70000
+# TYPE llamacpp:prompt_seconds_total counter
+llamacpp:prompt_seconds_total 160
+# TYPE llamacpp:tokens_predicted_total counter
+llamacpp:tokens_predicted_total 80000
+# TYPE llamacpp:tokens_predicted_seconds_total counter
+llamacpp:tokens_predicted_seconds_total 2700
+# TYPE llamacpp:prompt_tokens_seconds gauge
+llamacpp:prompt_tokens_seconds 0
+# TYPE llamacpp:predicted_tokens_seconds gauge
+llamacpp:predicted_tokens_seconds 28.5
+# TYPE llamacpp:requests_processing gauge
+llamacpp:requests_processing 1
+# TYPE llamacpp:requests_deferred gauge
+llamacpp:requests_deferred 0

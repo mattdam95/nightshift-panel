@@ -1,0 +1,10 @@
+{
+  "name": "Panel Nightshift",
+  "short_name": "Nightshift",
+  "start_url": "/#/vivo",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "icons": [{ "src": "/icono.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

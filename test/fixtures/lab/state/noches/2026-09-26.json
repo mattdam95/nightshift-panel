@@ -1,0 +1,21 @@
+[
+  {
+    "tarea": "demo/panel#1",
+    "repo": "demo/panel",
+    "numero": 1,
+    "titulo": "Esqueleto",
+    "estado": "bloqueada",
+    "motivo": "25 min sin cambios",
+    "inicio": "2026-09-26T01:00:07.000Z",
+    "fin": "2026-09-26T01:25:07.000Z",
+    "turnos": 5,
+    "tokens": 1110,
+    "llamadas": 5,
+    "rondasAgente": 1,
+    "testsAceptacion": [
+      "src/reloj.test.ts"
+    ],
+    "avisos": [],
+    "pregunta": "¿Puedo tocar package.json?"
+  }
+]

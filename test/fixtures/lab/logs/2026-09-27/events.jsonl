@@ -1,0 +1,37 @@
+{"ts":"2026-09-27T01:00:00.000Z","maquina":"pc","tarea":null,"etapa":"noche","tipo":"inicio","datos":{"hasta":"2026-09-27T10:59:00.000Z","repos":["demo/panel"],"pid":4242}}
+{"ts":"2026-09-27T01:00:07.000Z","maquina":"pc","tarea":null,"etapa":"cola","tipo":"estado","datos":{"listas":["demo/panel#3","demo/panel#5"]}}
+{"ts":"2026-09-27T01:00:14.000Z","maquina":"pc","tarea":null,"etapa":"sistema","tipo":"llm-arranque","datos":{"codigo":0}}
+{"ts":"2026-09-27T01:00:21.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"preparacion","tipo":"inicio","datos":{"rama":"agent/3-reloj","titulo":"Reloj de la noche","presupuesto":{"maxHoras":1,"maxTurnos":60,"prioridad":"alta","fase":"dos"}}}
+{"ts":"2026-09-27T01:00:28.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"preparacion","tipo":"fin","datos":{"base":"594b5aed3825132d3d070794bef4ba7c98897235","verificacion":["pnpm lint","pnpm test"]}}
+{"ts":"2026-09-27T01:00:35.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"tests","tipo":"agente-inicio","datos":{"ronda":1}}
+{"ts":"2026-09-27T01:00:42.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"tests","tipo":"herramienta","datos":{"nombre":"read","resumen":"/nightshift/spec.md"}}
+{"ts":"2026-09-27T01:00:49.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"tests","tipo":"turno","datos":{"n":1,"tokens":120}}
+{"ts":"2026-09-27T01:00:56.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"tests","tipo":"herramienta","datos":{"nombre":"write","resumen":"src/reloj.test.ts"}}
+{"ts":"2026-09-27T01:01:03.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"tests","tipo":"turno","datos":{"n":2,"tokens":340}}
+{"ts":"2026-09-27T01:01:10.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"tests","tipo":"agente-fin","datos":{"motivo":"fin","detalle":"","turnos":2,"tokens":460,"llamadas":2,"ms":60000}}
+{"ts":"2026-09-27T01:01:17.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"tests","tipo":"hash","datos":{"archivos":["src/reloj.test.ts"],"hash":"abc123"}}
+{"ts":"2026-09-27T01:01:24.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"tests","tipo":"rojo","datos":{"rojo":true,"instalo":true}}
+{"ts":"2026-09-27T01:01:31.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"implementacion","tipo":"agente-inicio","datos":{"ronda":1}}
+{"ts":"2026-09-27T01:01:38.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"implementacion","tipo":"herramienta","datos":{"nombre":"write","resumen":"src/reloj.ts"}}
+{"ts":"2026-09-27T01:01:45.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"implementacion","tipo":"turno","datos":{"n":1,"tokens":410}}
+{"ts":"2026-09-27T01:01:52.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"implementacion","tipo":"herramienta-error","datos":{"nombre":"bash","resumen":"pnpm test","salida":"1 failed"}}
+{"ts":"2026-09-27T01:01:59.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"implementacion","tipo":"turno","datos":{"n":2,"tokens":90}}
+{"ts":"2026-09-27T01:02:06.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"implementacion","tipo":"herramienta","datos":{"nombre":"edit","resumen":"src/reloj.ts"}}
+{"ts":"2026-09-27T01:02:13.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"implementacion","tipo":"turno","datos":{"n":3,"tokens":150}}
+{"ts":"2026-09-27T01:02:20.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"implementacion","tipo":"agente-fin","datos":{"motivo":"fin","detalle":"","turnos":3,"tokens":650,"llamadas":3,"ms":90000}}
+{"ts":"2026-09-27T01:02:27.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"verificacion","tipo":"paso","datos":{"comando":"pnpm install --frozen-lockfile","ok":true,"codigo":0,"ms":1300}}
+{"ts":"2026-09-27T01:02:34.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"verificacion","tipo":"paso","datos":{"comando":"pnpm lint","ok":true,"codigo":0,"ms":900}}
+{"ts":"2026-09-27T01:02:41.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"verificacion","tipo":"paso","datos":{"comando":"pnpm test","ok":true,"codigo":0,"ms":2100}}
+{"ts":"2026-09-27T01:02:48.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"verificacion","tipo":"resultado","datos":{"ok":true,"trampas":[]}}
+{"ts":"2026-09-27T01:02:55.000Z","maquina":"mac","tarea":"demo/panel#3","etapa":"revision","tipo":"inicio","datos":{"ronda":1}}
+{"ts":"2026-09-27T01:03:05.000Z","maquina":"mac","tarea":"demo/panel#3","etapa":"revision","tipo":"veredicto","datos":{"veredicto":"aprobar","problemas":[],"ms":9900,"recortado":false}}
+{"ts":"2026-09-27T01:03:12.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"entrega","tipo":"pr","datos":{"url":"https://github.com/demo/panel/pull/4"}}
+{"ts":"2026-09-27T01:03:19.000Z","maquina":"pc","tarea":"demo/panel#3","etapa":"entrega","tipo":"resultado","datos":{"estado":"lista","motivo":"verificación OK y el revisor aprueba","pr":"https://github.com/demo/panel/pull/4","turnos":5,"tokens":1110}}
+{"ts":"2026-09-27T01:03:26.000Z","maquina":"pc","tarea":"demo/panel#5","etapa":"preparacion","tipo":"inicio","datos":{"rama":"agent/5-cola","titulo":"Vista de la cola","presupuesto":{"maxHoras":2,"maxTurnos":80,"prioridad":"media","fase":"dos"}}}
+{"ts":"2026-09-27T01:03:33.000Z","maquina":"pc","tarea":"demo/panel#5","etapa":"preparacion","tipo":"fin","datos":{"base":"1111111111111111111111111111111111111111","verificacion":["pnpm lint","pnpm test"]}}
+{"ts":"2026-09-27T01:03:40.000Z","maquina":"pc","tarea":"demo/panel#5","etapa":"tests","tipo":"omitida","datos":{"motivo":"fase: unica"}}
+{"ts":"2026-09-27T01:03:47.000Z","maquina":"pc","tarea":"demo/panel#5","etapa":"implementacion","tipo":"agente-inicio","datos":{"ronda":1}}
+{"ts":"2026-09-27T01:03:54.000Z","maquina":"pc","tarea":"demo/panel#5","etapa":"implementacion","tipo":"herramienta","datos":{"nombre":"read","resumen":"/nightshift/spec.md"}}
+{"ts":"2026-09-27T01:04:01.000Z","maquina":"pc","tarea":"demo/panel#5","etapa":"implementacion","tipo":"turno","datos":{"n":1,"tokens":80}}
+{"ts":"2026-09-27T01:04:08.000Z","maquina":"pc","tarea":"demo/panel#5","etapa":"implementacion","tipo":"herramienta","datos":{"nombre":"bash","resumen":"pnpm typecheck"}}
+{"ts":"2026-09-27T01:04:15.000Z","maquina":"pc","tarea":"demo/panel#5","etapa":"implementacion","tipo":"turno","datos":{"n":2,"tokens":220}}

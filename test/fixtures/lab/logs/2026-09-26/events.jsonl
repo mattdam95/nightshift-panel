@@ -1,0 +1,4 @@
+{"ts":"2026-09-26T01:00:00.000Z","maquina":"pc","tarea":null,"etapa":"noche","tipo":"inicio","datos":{"hasta":"2026-09-26T10:59:00.000Z","repos":["demo/panel"],"pid":100}}
+{"ts":"2026-09-26T01:00:07.000Z","maquina":"pc","tarea":"demo/panel#1","etapa":"preparacion","tipo":"inicio","datos":{"rama":"agent/1-x","titulo":"Esqueleto","presupuesto":{"maxHoras":1,"maxTurnos":60,"prioridad":"media","fase":"dos"}}}
+{"ts":"2026-09-26T01:25:07.000Z","maquina":"pc","tarea":"demo/panel#1","etapa":"entrega","tipo":"resultado","datos":{"estado":"bloqueada","motivo":"25 min sin cambios","turnos":30,"tokens":9000}}
+{"ts":"2026-09-26T01:25:14.000Z","maquina":"pc","tarea":null,"etapa":"noche","tipo":"fin","datos":{"motivo":"cola vacía","tareas":1,"informe":"/srv/lab/reports/2026-09-26.md"}}

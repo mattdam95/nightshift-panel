@@ -1,0 +1,5 @@
+# Sin paquetes internos: un solo package.json. Este archivo existe por la configuración de pnpm 12.
+onlyBuiltDependencies:
+  - esbuild
+allowBuilds:
+  esbuild: true
