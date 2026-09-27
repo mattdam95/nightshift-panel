@@ -12,7 +12,7 @@ export default defineConfig({
   use: { baseURL: `http://127.0.0.1:${PUERTO}`, trace: "retain-on-failure" },
   projects: [{ name: "iphone", use: { ...devices["iPhone 15"], browserName: "chromium" } }],
   webServer: {
-    command: `node e2e/preparar.mjs && pnpm build && PANEL_ESPEJO=0 PANEL_DATOS=.e2e/lab PANEL_PUERTO=${PUERTO} node dist/server/index.js`,
+    command: `node e2e/preparar.mjs && pnpm build && PANEL_ESPEJO=0 PANEL_DATOS=.e2e/lab PANEL_FIXTURES=test/fixtures PANEL_PUERTO=${PUERTO} node dist/server/index.js`,
     url: `http://127.0.0.1:${PUERTO}/api/salud`,
     reuseExistingServer: false,
     timeout: 120_000,

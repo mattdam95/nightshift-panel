@@ -17,6 +17,7 @@ import { Seguidor } from "./seguidor.js";
  *   PANEL_ESPEJO   (1)  0 para no conectarse a la PC (dev y tests: se usa PANEL_DATOS tal cual).
  *   PC_SSH         (pc-lab)  Alias de SSH de la PC.
  *   PC_LAB         (/srv/lab)  Raíz del laboratorio en la PC.
+ *   PANEL_FIXTURES (sin valor)  Con PANEL_ESPEJO=0: carpeta de datos fijos para los proveedores (ver AGENTS.md).
  */
 const env = process.env;
 const aqui = fileURLToPath(new URL(".", import.meta.url));

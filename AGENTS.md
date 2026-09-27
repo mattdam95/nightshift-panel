@@ -24,9 +24,10 @@ e2e/            Playwright (iPhone 15, Chromium). Corre el build real con PANEL_
   Las rutas ya existen en `app.ts` y llaman a un proveedor de `Dependencias` (sin proveedor responden 501).
 - Lo que ejecuta comandos (`ssh`, `gh`, `vm_stat`) va separado de lo que **parsea** su salida. El parseo es una
   función pura con tests unitarios sobre un fixture; el comando real no se prueba en el sandbox (no hay red ni PC).
-- Para probar una vista con datos, el server acepta **variables de entorno de fixture** (por ejemplo
-  `PANEL_COLA_FIJA=test/fixtures/cola.json`): si la issue lo pide, agregala en `index.ts` y usala en `playwright.config.ts`
-  solo si la issue lo permite explícitamente.
+- **Datos fijos para dev y e2e:** con `PANEL_ESPEJO=0`, `index.ts` conecta proveedores "fijos" que leen archivos de
+  `$PANEL_FIXTURES` (en e2e y en `pnpm dev:server` vale `test/fixtures`). Cada sección usa su archivo: `sonda-pc.json`,
+  `mac.json`, `cola.json`, `issues/<owner>_<repo>-<n>.json`, `diffs/<owner>_<repo>-<n>.diff`. Si el archivo no existe,
+  el proveedor devuelve el estado vacío o "apagado". Así Playwright prueba cada vista sin PC, sin `gh` y sin red.
 - **No modifiques los fixtures que ya existen** (otros tests dependen de ellos). Agregá archivos nuevos. Si agregás una noche
   de ejemplo en `test/fixtures/lab/logs/`, que sea **anterior a 2026-09-26**.
 - UI: todo elemento que chequee un test lleva `data-testid`. Usá las variables CSS de `estilos.css`, nada de colores sueltos.

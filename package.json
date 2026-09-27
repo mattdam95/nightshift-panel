@@ -6,7 +6,7 @@
   "description": "Panel Nightshift: visualizador en vivo e historial de los agentes nocturnos",
   "scripts": {
     "dev": "vite",
-    "dev:server": "PANEL_ESPEJO=0 PANEL_DATOS=test/fixtures/lab tsx watch src/server/index.ts",
+    "dev:server": "PANEL_ESPEJO=0 PANEL_DATOS=test/fixtures/lab PANEL_FIXTURES=test/fixtures tsx watch src/server/index.ts",
     "build": "vite build && tsc -p tsconfig.server.json",
     "start": "node dist/server/index.js",
     "lint": "prettier --check .",
