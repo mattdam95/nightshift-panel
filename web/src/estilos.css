@@ -143,6 +143,91 @@ main {
 .chip.mac {
   color: var(--mac);
 }
+.chip.en-curso {
+  color: var(--acento);
+}
+
+.error-texto {
+  color: var(--error);
+}
+
+/* Historial: una fila por noche, la más nueva primero. */
+.lista-noches {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.noche {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  min-height: 44px;
+  padding: 8px 12px;
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  color: var(--texto);
+  text-decoration: none;
+}
+.noche .fecha {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.noche .estados {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+/* Noche: un resultado por tarea. */
+.resultados {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.resumen {
+  margin: 4px 0 0;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+.detalle-extra {
+  margin: 8px 0 0;
+}
+.pregunta {
+  margin: 8px 0 0;
+}
+.boton {
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  color: var(--texto);
+  font: inherit;
+  cursor: pointer;
+}
+.reporte-bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.reporte {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 8px;
+}
 
 .etapas {
   display: flex;
