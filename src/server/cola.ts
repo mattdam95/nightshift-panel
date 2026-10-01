@@ -110,16 +110,15 @@ export function traerDeGh(): (repo: string) => Promise<IssueGh[]> {
  * Crea el proveedor de la cola: una función asíncrona que devuelve la clasificación actual
  * (lo que la ruta `GET /api/cola` ejecuta). Refresca los datos a lo sumo una vez cada `ttlMs`
  * (60 s por defecto); si `traer` rechaza para un repo, ese repo se omite y los issues de los
- * demás salen igual. El objeto devuelto ES un `Cola` (las listas más recientes) y a su vez es
- * invocable, así que puede pasarse directamente como proveedor a `crearApp` — el test de
- * aceptación lo hace exactamente así (`await crearProveedorCola(...)(...)`).
+ * demás salen igual. Lo devuelto es el proveedor en sí: se pasa a `crearApp` como dependencia
+ * `cola` sin llamarlo (así lo cablea `index.ts`), y la ruta lo invoca en cada pedido.
  */
 export function crearProveedorCola(op: {
   repos: string[];
   traer: (repo: string) => Promise<IssueGh[]>;
   ahora?: () => number;
   ttlMs?: number;
-}): () => Promise<Cola & { (): Promise<Cola> }> {
+}): () => Promise<Cola> {
   const ahora = op.ahora ?? Date.now;
   const ttlMs = op.ttlMs ?? 60_000;
   let ts = 0;
@@ -138,13 +137,8 @@ export function crearProveedorCola(op: {
     listo = true;
   }
 
-  const invocar = async (): Promise<Cola> => {
-    if (!listo || ahora() - ts >= ttlMs) await refrescar();
-    return cola;
-  };
-
   return async () => {
     if (!listo || ahora() - ts >= ttlMs) await refrescar();
-    return Object.assign(invocar, cola);
+    return cola;
   };
 }

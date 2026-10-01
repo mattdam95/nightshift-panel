@@ -93,7 +93,7 @@ describe("traerDeFixtures", () => {
     expect(await (await traerDeFixtures("carpeta-que-no-existe"))("mattdam95/monigotes")).toEqual([]);
   });
   it("criterio 6: con el proveedor, GET /api/cola responde 200 con las tres listas clasificadas; sin el proveedor sigue respondiendo 501", async () => {
-    const cola = await crearProveedorCola({ repos: REPOS, traer: traerDeFixtures("test/fixtures"), ahora: () => 0 })();
+    const cola = crearProveedorCola({ repos: REPOS, traer: traerDeFixtures("test/fixtures"), ahora: () => 0 });
     const r = await crearApp({ almacen, seguidor, cola }).request("/api/cola");
     expect(r.status).toBe(200);
     const cuerpo = (await r.json()) as Cola;
