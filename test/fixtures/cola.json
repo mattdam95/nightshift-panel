@@ -1,0 +1,58 @@
+{
+  "mattdam95/monigotes": [
+    {
+      "number": 12,
+      "title": "Ordenar la lista de monigotes por fecha",
+      "url": "https://github.com/mattdam95/monigotes/issues/12",
+      "labels": [{ "name": "agent" }, { "name": "agent:ready" }],
+      "comments": []
+    },
+    {
+      "number": 9,
+      "title": "Sacar el doble toque del botón",
+      "url": "https://github.com/mattdam95/monigotes/issues/9",
+      "labels": [{ "name": "agent" }, { "name": "agent:done" }],
+      "comments": []
+    }
+  ],
+  "mattdam95/nightshift-panel": [
+    {
+      "number": 21,
+      "title": "Vista de la cola",
+      "url": "https://github.com/mattdam95/nightshift-panel/issues/21",
+      "labels": [{ "name": "agent" }, { "name": "agent:ready" }],
+      "comments": []
+    },
+    {
+      "number": 5,
+      "title": "Endpoint GET /api/maquinas",
+      "url": "https://github.com/mattdam95/nightshift-panel/issues/5",
+      "labels": [{ "name": "agent" }, { "name": "agent:ready" }],
+      "comments": []
+    },
+    {
+      "number": 7,
+      "title": "Endpoint GET /api/cola",
+      "url": "https://github.com/mattdam95/nightshift-panel/issues/7",
+      "labels": [{ "name": "agent" }, { "name": "agent:blocked" }],
+      "comments": [
+        { "body": "**nightshift:** arrancó la tarea" },
+        { "body": "**nightshift:** ⛔ se trabó\n**Pregunta:**   ¿Puedo tocar el lockfile?   \nGracias" }
+      ]
+    },
+    {
+      "number": 30,
+      "title": "Línea de tiempo de la noche",
+      "url": "https://github.com/mattdam95/nightshift-panel/issues/30",
+      "labels": [{ "name": "agent" }, { "name": "agent:running" }],
+      "comments": []
+    },
+    {
+      "number": 19,
+      "title": "Íconos PNG para la pantalla de inicio",
+      "url": "https://github.com/mattdam95/nightshift-panel/issues/19",
+      "labels": [{ "name": "agent" }],
+      "comments": []
+    }
+  ]
+}
