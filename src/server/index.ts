@@ -38,7 +38,7 @@ const repos = (env.PANEL_REPOS ?? "mattdam95/monigotes,mattdam95/nightshift-pane
   .map((r) => r.trim())
   .filter((r) => r !== "");
 const traerIssues = !conEspejo && env.PANEL_FIXTURES ? traerDeFixtures(env.PANEL_FIXTURES) : traerDeGh();
-const cola = await crearProveedorCola({ repos, traer: traerIssues })();
+const cola = crearProveedorCola({ repos, traer: traerIssues });
 
 let pc: FuentePc | undefined;
 let espejo: Espejo | undefined;

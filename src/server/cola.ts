@@ -107,40 +107,24 @@ export function traerDeGh(): (repo: string) => Promise<IssueGh[]> {
 }
 
 /**
- * Proveedor de la cola: se llama para devolver la clasificación actual y expone las últimas
- * listas como propiedades. Refresca los datos a lo sumo una vez cada `ttlMs` (60 s por defecto);
- * si `traer` rechaza para un repo, ese repo se omite y los issues de los demás salen igual.
- */
-export type ProveedorCola = {
-  (): Promise<Cola>;
-  /** Últimas listas calculadas (se actualizan en cada refrescación). */
-  listas: ItemCola[];
-  sinDefinir: ItemCola[];
-  bloqueadas: ItemCola[];
-};
-
-/**
- * Crea el proveedor de la cola. Devuelve una función asíncrona que arma (o devuelve, si la caché
- * está fresca) el `ProveedorCola`; llamar al proveedor es lo que la ruta `GET /api/cola` ejecuta.
+ * Crea el proveedor de la cola: una función asíncrona que devuelve la clasificación actual
+ * (lo que la ruta `GET /api/cola` ejecuta). Refresca los datos a lo sumo una vez cada `ttlMs`
+ * (60 s por defecto); si `traer` rechaza para un repo, ese repo se omite y los issues de los
+ * demás salen igual. El objeto devuelto ES un `Cola` (las listas más recientes) y a su vez es
+ * invocable, así que puede pasarse directamente como proveedor a `crearApp` — el test de
+ * aceptación lo hace exactamente así (`await crearProveedorCola(...)(...)`).
  */
 export function crearProveedorCola(op: {
   repos: string[];
   traer: (repo: string) => Promise<IssueGh[]>;
   ahora?: () => number;
   ttlMs?: number;
-}): () => Promise<ProveedorCola> {
+}): () => Promise<Cola & { (): Promise<Cola> }> {
   const ahora = op.ahora ?? Date.now;
   const ttlMs = op.ttlMs ?? 60_000;
   let ts = 0;
   let listo = false;
-
-  const proveedor: ProveedorCola = Object.assign(
-    async (): Promise<Cola> => {
-      if (!listo || ahora() - ts >= ttlMs) await refrescar();
-      return { listas: proveedor.listas, sinDefinir: proveedor.sinDefinir, bloqueadas: proveedor.bloqueadas };
-    },
-    { listas: [] as ItemCola[], sinDefinir: [] as ItemCola[], bloqueadas: [] as ItemCola[] },
-  );
+  let cola: Cola = { listas: [], sinDefinir: [], bloqueadas: [] };
 
   async function refrescar() {
     const resultados = await Promise.allSettled(op.repos.map((repo) => op.traer(repo)));
@@ -149,16 +133,18 @@ export function crearProveedorCola(op: {
       const resultado = resultados[i];
       if (resultado?.status === "fulfilled") porRepo[repo] = resultado.value;
     });
-    const cola = clasificarCola(porRepo);
-    proveedor.listas = cola.listas;
-    proveedor.sinDefinir = cola.sinDefinir;
-    proveedor.bloqueadas = cola.bloqueadas;
+    cola = clasificarCola(porRepo);
     ts = ahora();
     listo = true;
   }
 
+  const invocar = async (): Promise<Cola> => {
+    if (!listo || ahora() - ts >= ttlMs) await refrescar();
+    return cola;
+  };
+
   return async () => {
     if (!listo || ahora() - ts >= ttlMs) await refrescar();
-    return proveedor;
+    return Object.assign(invocar, cola);
   };
 }
