@@ -98,7 +98,10 @@ function Reporte({ fecha }: { fecha: string }) {
   const [error, setError] = useState<string | null>(null);
 
   const ver = async () => {
-    // El reporte es text/markdown, no JSON: se pide con fetch y se muestra tal cual.
+    // El reporte es text/markdown, no JSON: se pide con fetch y se muestra tal cual,
+    // sin recortar ni agregar nada. El archivo de la copia de datos trae el encabezado
+    // `# Noche del <fecha>` y el test de aceptación espera ver `# Noche del <fecha>`
+    // dentro del pre (que incluye el texto `Noche del <fecha>` que pide la spec).
     try {
       const r = await fetch(`/api/noches/${encodeURIComponent(fecha)}/reporte`);
       if (!r.ok) {
