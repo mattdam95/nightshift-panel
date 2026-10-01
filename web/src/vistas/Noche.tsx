@@ -95,12 +95,21 @@ function Resultado({ r }: { r: ResultadoTarea }) {
 
 function Reporte({ fecha }: { fecha: string }) {
   const [texto, setTexto] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const ver = async () => {
     // El reporte es text/markdown, no JSON: se pide con fetch y se muestra tal cual.
-    const r = await fetch(`/api/noches/${encodeURIComponent(fecha)}/reporte`);
-    if (!r.ok) return;
-    setTexto(await r.text());
+    try {
+      const r = await fetch(`/api/noches/${encodeURIComponent(fecha)}/reporte`);
+      if (!r.ok) {
+        setError("No se pudo traer el reporte");
+        return;
+      }
+      setError(null);
+      setTexto(await r.text());
+    } catch {
+      setError("No se pudo traer el reporte");
+    }
   };
 
   return (
@@ -108,6 +117,11 @@ function Reporte({ fecha }: { fecha: string }) {
       <button className="boton" data-testid="ver-reporte" onClick={ver}>
         Ver reporte
       </button>
+      {error !== null && (
+        <p className="tarjeta error-texto" data-testid="error-reporte">
+          {error}
+        </p>
+      )}
       {texto !== null && (
         <pre className="mono reporte" data-testid="reporte">
           {texto}
