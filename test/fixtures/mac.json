@@ -1,0 +1,5 @@
+{
+  "memoriaUsadaGiB": 14.2,
+  "memoriaTotalGiB": 24,
+  "revisor": { "salud": "ok", "tokPorSegGeneracion": 5.5, "tokPorSegPrompt": 16, "peticionesEnCurso": 0 }
+}
