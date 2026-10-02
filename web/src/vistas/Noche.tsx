@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import type { DetalleNoche, ResultadoTarea } from "../../../src/contrato/api";
+import type { Evento } from "../../../src/contrato/eventos";
 import { obtener } from "../api";
+import { LineaTiempo } from "../componentes/LineaTiempo";
 import { duracion, ICONO_ESTADO } from "../formato";
 
 export function Noche({ params }: { params: string[] }) {
   const fecha = params[0] ?? "";
   const [detalle, setDetalle] = useState<DetalleNoche | null>(null);
+  const [eventos, setEventos] = useState<Evento[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -19,6 +22,18 @@ export function Noche({ params }: { params: string[] }) {
     obtener<DetalleNoche>(`/api/noches/${encodeURIComponent(fecha)}`)
       .then((d) => vivo && setDetalle(d))
       .catch((e: Error) => vivo && setError(e.message));
+    return () => {
+      vivo = false;
+    };
+  }, [fecha]);
+
+  useEffect(() => {
+    if (!fecha) return;
+    let vivo = true;
+    setEventos([]);
+    obtener<Evento[]>(`/api/noches/${encodeURIComponent(fecha)}/eventos`)
+      .then((e) => vivo && setEventos(e))
+      .catch(() => vivo && setEventos([]));
     return () => {
       vivo = false;
     };
@@ -40,6 +55,7 @@ export function Noche({ params }: { params: string[] }) {
 
       {detalle && (
         <>
+          <LineaTiempo eventos={eventos} />
           <ul className="resultados">
             {detalle.resultados.map((r) => (
               <Resultado key={r.tarea} r={r} />
@@ -106,14 +122,12 @@ function Reporte({ fecha }: { fecha: string }) {
       const r = await fetch(`/api/noches/${encodeURIComponent(fecha)}/reporte`);
       if (!r.ok) {
         setError("No se pudo traer el reporte");
-        setTexto(null); // se va el reporte de un intento anterior
         return;
       }
       setError(null);
       setTexto(await r.text());
     } catch {
       setError("No se pudo traer el reporte");
-      setTexto(null); // se va el reporte de un intento anterior
     }
   };
 

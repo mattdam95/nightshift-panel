@@ -6,6 +6,7 @@ import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Almacen } from "./almacen.js";
 import { crearApp, type FuentePc } from "./app.js";
+import { crearProveedorCola, traerDeFixtures, traerDeGh } from "./cola.js";
 import { Espejo, estadoPcDeSonda } from "./espejo.js";
 import { Seguidor } from "./seguidor.js";
 
@@ -18,6 +19,7 @@ import { Seguidor } from "./seguidor.js";
  *   PC_SSH         (pc-lab)  Alias de SSH de la PC.
  *   PC_LAB         (/srv/lab)  Raíz del laboratorio en la PC.
  *   PANEL_FIXTURES (sin valor)  Con PANEL_ESPEJO=0: carpeta de datos fijos para los proveedores (ver AGENTS.md).
+ *   PANEL_REPOS    (mattdam95/monigotes,mattdam95/nightshift-panel)  Repos de la cola, separados por comas.
  */
 const env = process.env;
 const aqui = fileURLToPath(new URL(".", import.meta.url));
@@ -29,6 +31,14 @@ const version = (JSON.parse(readFileSync(join(raizProyecto, "package.json"), "ut
 const almacen = new Almacen(datos);
 const seguidor = new Seguidor(almacen);
 seguidor.iniciar();
+
+// Cola de issues: con espejo apagado y PANEL_FIXTURES, los datos salen del fixture (ver AGENTS.md).
+const repos = (env.PANEL_REPOS ?? "mattdam95/monigotes,mattdam95/nightshift-panel")
+  .split(",")
+  .map((r) => r.trim())
+  .filter((r) => r !== "");
+const traerIssues = !conEspejo && env.PANEL_FIXTURES ? traerDeFixtures(env.PANEL_FIXTURES) : traerDeGh();
+const cola = crearProveedorCola({ repos, traer: traerIssues });
 
 let pc: FuentePc | undefined;
 let espejo: Espejo | undefined;
@@ -51,7 +61,7 @@ if (conEspejo) {
   void espejo.iniciar();
 }
 
-const app = crearApp({ almacen, seguidor, pc, version });
+const app = crearApp({ almacen, seguidor, pc, version, cola });
 
 // SPA: los archivos del build de Vite, y cualquier otra ruta devuelve index.html (el router es del cliente).
 const web = join(raizProyecto, "dist", "web");

@@ -324,3 +324,13 @@ main {
 .pestanas a[aria-current="page"] {
   color: var(--acento);
 }
+
+/* Noche: línea de tiempo por máquina (SVG a mano). Ocupa el ancho disponible, nunca más:
+   con `width: 100%` (y `max-width: 100%` como redoblón) el viewBox de 340 unidades se
+   escala al contenedor y no fuerza scroll horizontal a 375 px. */
+.linea-tiempo {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}

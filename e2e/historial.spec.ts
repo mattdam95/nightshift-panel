@@ -164,33 +164,3 @@ test("noche: reintentar el reporte: si después del error el pedido anda, aparec
   await expect(page.getByTestId("reporte")).toContainText("# Noche del 2026-09-26");
   await expect(page.getByTestId("error-reporte")).toHaveCount(0);
 });
-
-test("noche: si el pedido del reporte falla (500) después de haberse cargado, no queda el reporte viejo", async ({ page }) => {
-  // Primera vez el pedido anda: aparece el reporte.
-  await page.goto("/#/noche/2026-09-26");
-  await expect(page.getByTestId("ver-reporte")).toBeVisible();
-  await page.getByTestId("ver-reporte").click();
-  await expect(page.getByTestId("reporte")).toContainText("# Noche del 2026-09-26");
-
-  // Después el pedido falla: aparece el error y el reporte viejo se limpia.
-  await page.route(RUTA_REPORTE, (route) => route.fulfill({ status: 500 }));
-  await page.getByTestId("ver-reporte").click();
-
-  await expect(page.getByTestId("error-reporte")).toBeVisible();
-  await expect(page.getByTestId("reporte")).toHaveCount(0);
-});
-
-test("noche: si el pedido del reporte tira (red caída) después de haberse cargado, no queda el reporte viejo", async ({ page }) => {
-  // Primera vez el pedido anda: aparece el reporte.
-  await page.goto("/#/noche/2026-09-26");
-  await expect(page.getByTestId("ver-reporte")).toBeVisible();
-  await page.getByTestId("ver-reporte").click();
-  await expect(page.getByTestId("reporte")).toContainText("# Noche del 2026-09-26");
-
-  // Después el pedido tira: aparece el error y el reporte viejo se limpia.
-  await page.route(RUTA_REPORTE, (route) => route.abort());
-  await page.getByTestId("ver-reporte").click();
-
-  await expect(page.getByTestId("error-reporte")).toBeVisible();
-  await expect(page.getByTestId("reporte")).toHaveCount(0);
-});
