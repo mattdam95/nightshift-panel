@@ -334,3 +334,37 @@ main {
   max-width: 100%;
   height: auto;
 }
+
+/* Cola: una tarjeta por issue, agrupada por estado. El enlace ocupa la altura de toque. */
+.cola-titulo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.cola-titulo h2 {
+  margin: 0;
+}
+.lista-cola {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cola-item .ref {
+  display: block;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+.cola-enlace {
+  display: block;
+  min-height: 44px;
+  padding: 10px 0;
+  color: var(--texto);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.cola-item .tarjeta.destacada {
+  margin: 8px 0 0;
+}
