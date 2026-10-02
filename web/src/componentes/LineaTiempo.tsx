@@ -47,7 +47,12 @@ export function LineaTiempo({ eventos }: { eventos: Evento[] }): JSX.Element | n
   };
   const xPorIndice = (i: number, n: number) => X0 + ((i + 0.5) / Math.max(n, 1)) * (X1 - X0);
 
+  // Una entrada por etapa presente en la noche. En el fixture del 2026-09-27 hay
+  // las seis (la entrega de #3 corre en la PC, después de la revisión de la Mac),
+  // que es lo que asume `e2e/linea-tiempo.spec.ts` (`toHaveCount(6)`).
   const etapasPresentes = ETAPAS_TAREA.filter((etapa) => tramos.some((f) => f.etapa === etapa));
+  // Marcas equiespaciadas: la etiqueta usa `hora()`, que convierte la ISO (UTC) a la
+  // zona de Argentina (America/Argentina/Buenos_Aires) internamente antes de formatear.
   const marcas = [0, 1, 2, 3, 4].map((i) => ({
     x: X0 + (i / 4) * (X1 - X0),
     etiqueta: hora(new Date(ini + (i / 4) * rango).toISOString()),
