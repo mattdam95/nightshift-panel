@@ -106,12 +106,14 @@ function Reporte({ fecha }: { fecha: string }) {
       const r = await fetch(`/api/noches/${encodeURIComponent(fecha)}/reporte`);
       if (!r.ok) {
         setError("No se pudo traer el reporte");
+        setTexto(null); // se va el reporte de un intento anterior
         return;
       }
       setError(null);
       setTexto(await r.text());
     } catch {
       setError("No se pudo traer el reporte");
+      setTexto(null); // se va el reporte de un intento anterior
     }
   };
 
