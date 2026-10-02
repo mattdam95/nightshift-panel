@@ -37,11 +37,15 @@ export function LineaTiempo({ eventos }: { eventos: Evento[] }): JSX.Element | n
   const ini = instantes.length > 0 ? Math.min(...instantes) : 0;
   const fin = instantes.length > 0 ? Math.max(...instantes) : 0;
   const rango = fin - ini;
+  // Con rango 0 (todos los eventos con el mismo `ts`) la posición por tiempo es imposible:
+  // en ese caso límite las franjas se reparten a partes iguales para que no se superpongan.
+  const sinRango = rango <= 0;
   const xDe = (ts: string) => {
     const t = Date.parse(ts);
-    if (!Number.isFinite(t) || rango <= 0) return X0;
+    if (!Number.isFinite(t) || sinRango) return X0;
     return X0 + ((t - ini) / rango) * (X1 - X0);
   };
+  const xPorIndice = (i: number, n: number) => X0 + ((i + 0.5) / Math.max(n, 1)) * (X1 - X0);
 
   const etapasPresentes = ETAPAS_TAREA.filter((etapa) => tramos.some((f) => f.etapa === etapa));
   const marcas = [0, 1, 2, 3, 4].map((i) => ({
@@ -59,8 +63,24 @@ export function LineaTiempo({ eventos }: { eventos: Evento[] }): JSX.Element | n
     >
       <Leyenda etapas={etapasPresentes} />
 
-      <Fila maquina="PC" color="var(--pc)" y={FILA_PC_Y} tramos={tramos.filter((f) => f.maquina === "pc")} xDe={xDe} />
-      <Fila maquina="Mac" color="var(--mac)" y={FILA_MAC_Y} tramos={tramos.filter((f) => f.maquina === "mac")} xDe={xDe} />
+      <Fila
+        maquina="PC"
+        color="var(--pc)"
+        y={FILA_PC_Y}
+        tramos={tramos.filter((f) => f.maquina === "pc")}
+        xDe={xDe}
+        xPorIndice={xPorIndice}
+        sinRango={sinRango}
+      />
+      <Fila
+        maquina="Mac"
+        color="var(--mac)"
+        y={FILA_MAC_Y}
+        tramos={tramos.filter((f) => f.maquina === "mac")}
+        xDe={xDe}
+        xPorIndice={xPorIndice}
+        sinRango={sinRango}
+      />
 
       {marcas.map((m) => (
         <text key={m.x} data-testid="marca-tiempo" x={m.x} y={EJE_Y} textAnchor="middle" fontSize="9" fill="var(--sub)">
@@ -96,12 +116,16 @@ function Fila({
   y,
   tramos,
   xDe,
+  xPorIndice,
+  sinRango,
 }: {
   maquina: string;
   color: string;
   y: number;
   tramos: Franja[];
   xDe: (ts: string) => number;
+  xPorIndice: (i: number, n: number) => number;
+  sinRango: boolean;
 }) {
   return (
     <g data-testid={maquina === "PC" ? "fila-pc" : "fila-mac"}>
@@ -109,24 +133,31 @@ function Fila({
       <text x="22" y={y + FILA_ALTO / 2 + 4} textAnchor="middle" fontSize="11" fontWeight="600" fill={color}>
         {maquina}
       </text>
-      {tramos.map((f) => (
-        <FranjaRecta key={`${f.desde}-${f.etapa}`} franja={f} y={y} xDe={xDe} />
-      ))}
+      {tramos.map((f, i) => {
+        // Con rango 0 no hay escala de tiempo: cada franja ocupa su hueco por índice.
+        const xIni = sinRango ? xPorIndice(i, tramos.length) : xDe(f.desde);
+        const xFin = sinRango ? xIni + 2 : xDe(f.hasta);
+        return <FranjaRecta key={`${f.desde}-${f.etapa}`} franja={f} y={y} xIni={xIni} xFin={xFin} />;
+      })}
     </g>
   );
 }
 
-/** Una franja: recta coloreada con su `<title>`, envuelta en un enlace al detalle de la tarea. */
-function FranjaRecta({ franja, y, xDe }: { franja: Franja; y: number; xDe: (ts: string) => number }) {
-  const desde = xDe(franja.desde);
-  const hasta = xDe(franja.hasta);
-  const ancho = Math.max(2, hasta - desde);
+/**
+ * Una franja: recta coloreada con su `<title>`, envuelta en un enlace al detalle de la tarea.
+ *
+ * Ojo: el `<a>` está dentro del `<svg>`, y React lo crea en el **namespace SVG** (no es un ancla
+ * HTML): es el elemento `<a>` de SVG2, cuyo atributo `href` navega al hacer clic (comprobado en
+ * el build: `namespaceURI === "http://www.w3.org/2000/svg"`). No reemplazarlo por un ancla HTML.
+ */
+function FranjaRecta({ franja, y, xIni, xFin }: { franja: Franja; y: number; xIni: number; xFin: number }) {
+  const ancho = Math.max(2, xFin - xIni);
   const detalle = partirTarea(franja.tarea);
   const titulo = `${franja.tarea} · ${NOMBRE_ETAPA[franja.etapa]} · ${duracion(Date.parse(franja.hasta) - Date.parse(franja.desde))}`;
   const recta = (
     <>
       <title>{titulo}</title>
-      <rect x={desde} y={y + 3} width={ancho} height={FILA_ALTO - 6} rx="4" fill={COLOR_ETAPA[franja.etapa]} />
+      <rect x={xIni} y={y + 3} width={ancho} height={FILA_ALTO - 6} rx="4" fill={COLOR_ETAPA[franja.etapa]} />
     </>
   );
   if (!detalle) return <g data-testid="franja">{recta}</g>;
