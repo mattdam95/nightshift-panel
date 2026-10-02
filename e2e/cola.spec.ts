@@ -107,7 +107,7 @@ test("cola: con la cola vacía, las secciones se siguen viendo con cantidad 0 y 
 
   const nada = page.getByTestId("nada");
   await expect(nada).toHaveCount(3);
-  await expect(nada).toContainText("Nada por acá");
+  await expect(nada).toHaveText(["Nada por acá", "Nada por acá", "Nada por acá"]);
   await expect(page.getByTestId("item-cola")).toHaveCount(0);
 });
 
