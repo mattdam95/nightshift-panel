@@ -324,3 +324,10 @@ main {
 .pestanas a[aria-current="page"] {
   color: var(--acento);
 }
+
+/* Noche: línea de tiempo por máquina (SVG a mano). Ocupa el ancho disponible, nunca más. */
+.linea-tiempo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
