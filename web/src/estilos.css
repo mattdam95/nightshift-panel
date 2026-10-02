@@ -368,3 +368,28 @@ main {
 .cola-item .tarjeta.destacada {
   margin: 8px 0 0;
 }
+
+/* Máquinas: barra de uso (VRAM, memoria) y punto de salud. */
+.barra {
+  height: 6px;
+  margin-top: 10px;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.barra > div {
+  height: 100%;
+  background: var(--acento);
+}
+.salud {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.punto.salud-ok {
+  background: var(--ok);
+}
+.punto.salud-caido {
+  background: var(--error);
+}
