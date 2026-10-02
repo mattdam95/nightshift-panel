@@ -113,3 +113,54 @@ test("historial y noche caben en el ancho del iPhone sin scroll horizontal", asy
   await expect(page.getByTestId("resultado")).toHaveCount(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(ancho);
 });
+
+// --- Manejo de error del pedido del reporte (issue: el botón Ver reporte falla en silencio) ---
+
+const RUTA_REPORTE = "**/api/noches/2026-09-26/reporte";
+
+test("noche: si el pedido del reporte no sale bien (500), muestra error-reporte y no el reporte", async ({ page }) => {
+  await page.route(RUTA_REPORTE, (route) => route.fulfill({ status: 500 }));
+
+  await page.goto("/#/noche/2026-09-26");
+  await expect(page.getByTestId("ver-reporte")).toBeVisible();
+  await page.getByTestId("ver-reporte").click();
+
+  const error = page.getByTestId("error-reporte");
+  await expect(error).toBeVisible();
+  await expect(error).toContainText(/no se pudo traer el reporte/i);
+
+  // En el caso de error no aparece el reporte.
+  await expect(page.getByTestId("reporte")).toHaveCount(0);
+});
+
+test("noche: si el pedido del reporte tira (red caída), muestra error-reporte y no el reporte", async ({ page }) => {
+  await page.route(RUTA_REPORTE, (route) => route.abort());
+
+  await page.goto("/#/noche/2026-09-26");
+  await expect(page.getByTestId("ver-reporte")).toBeVisible();
+  await page.getByTestId("ver-reporte").click();
+
+  const error = page.getByTestId("error-reporte");
+  await expect(error).toBeVisible();
+  await expect(error).toContainText(/no se pudo traer el reporte/i);
+  await expect(page.getByTestId("reporte")).toHaveCount(0);
+});
+
+test("noche: reintentar el reporte: si después del error el pedido anda, aparece el reporte y se va el error", async ({ page }) => {
+  await page.route(RUTA_REPORTE, (route) => route.fulfill({ status: 500 }));
+
+  await page.goto("/#/noche/2026-09-26");
+  await expect(page.getByTestId("ver-reporte")).toBeVisible();
+
+  // Primera vez: el pedido falla y aparece el error.
+  await page.getByTestId("ver-reporte").click();
+  await expect(page.getByTestId("error-reporte")).toBeVisible();
+  await expect(page.getByTestId("reporte")).toHaveCount(0);
+
+  // El pedido vuelve a andar y se toca el botón de nuevo.
+  await page.unroute(RUTA_REPORTE);
+  await page.getByTestId("ver-reporte").click();
+
+  await expect(page.getByTestId("reporte")).toContainText("# Noche del 2026-09-26");
+  await expect(page.getByTestId("error-reporte")).toHaveCount(0);
+});
