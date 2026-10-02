@@ -4,10 +4,13 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import type { Maquinas } from "../contrato/api.js";
 import { Almacen } from "./almacen.js";
 import { crearApp, type FuentePc } from "./app.js";
 import { crearProveedorCola, traerDeFixtures, traerDeGh } from "./cola.js";
 import { Espejo, estadoPcDeSonda } from "./espejo.js";
+import { ejecutarEnMac, medirMac } from "./mac.js";
+import { MAC_VACIA, crearProveedorMaquinas, macDeFixtures, pcDeFixtures } from "./maquinas.js";
 import { Seguidor } from "./seguidor.js";
 
 /**
@@ -41,6 +44,7 @@ const traerIssues = !conEspejo && env.PANEL_FIXTURES ? traerDeFixtures(env.PANEL
 const cola = crearProveedorCola({ repos, traer: traerIssues });
 
 let pc: FuentePc | undefined;
+let maquinas: (() => Promise<Maquinas>) | undefined;
 let espejo: Espejo | undefined;
 if (conEspejo) {
   espejo = new Espejo({
@@ -58,10 +62,22 @@ if (conEspejo) {
       return () => e.off("pc", fn);
     },
   };
+  maquinas = crearProveedorMaquinas({
+    pc: async () => ({ sonda: e.ultimaSonda, conexion: e.conexion }),
+    mac: () => medirMac(ejecutarEnMac, fetch),
+  });
   void espejo.iniciar();
+} else if (env.PANEL_FIXTURES) {
+  // Dev y e2e: los datos fijos salen de los fixtures (ver AGENTS.md).
+  maquinas = crearProveedorMaquinas({ pc: pcDeFixtures(env.PANEL_FIXTURES), mac: macDeFixtures(env.PANEL_FIXTURES) });
+} else {
+  maquinas = crearProveedorMaquinas({
+    pc: async () => ({ sonda: null, conexion: "sin-espejo" }),
+    mac: async () => MAC_VACIA,
+  });
 }
 
-const app = crearApp({ almacen, seguidor, pc, version, cola });
+const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas });
 
 // SPA: los archivos del build de Vite, y cualquier otra ruta devuelve index.html (el router es del cliente).
 const web = join(raizProyecto, "dist", "web");
