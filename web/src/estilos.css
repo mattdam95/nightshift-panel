@@ -368,3 +368,20 @@ main {
 .cola-item .tarjeta.destacada {
   margin: 8px 0 0;
 }
+
+/* Acciones (vista En vivo): fila de botones, confirmación en la misma tarjeta y resultado. */
+.acciones-fila {
+  flex-wrap: wrap;
+}
+.confirmacion {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.confirmacion p {
+  margin: 0;
+}
+.resultado-accion {
+  margin: 10px 0 0;
+}

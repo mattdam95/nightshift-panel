@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { NOMBRE_ACCION, accionesVisibles, textoConfirmacion } from "../../../src/contrato/acciones";
 import { ETAPAS_TAREA } from "../../../src/contrato/eventos";
 import { limiteTarea, type TareaVivo } from "../../../src/contrato/vivo";
 import { duracion, hora, horaCorta, ICONO_ESTADO, NOMBRE_ETAPA } from "../formato";
 import { enlace } from "../ruta";
+import { useAcciones } from "../useAcciones";
 import type { Vivo as DatosVivo } from "../useVivo";
 
 function useAhora(cadaMs = 1000): number {
@@ -15,9 +17,17 @@ function useAhora(cadaMs = 1000): number {
 }
 
 export function Vivo({ datos }: { datos: DatosVivo }) {
-  const { vivo } = datos;
+  const { vivo, estadoPc } = datos;
   const ahora = useAhora();
   const noche = vivo.noche;
+  const { pendiente, enviando, resultado, pedir, cancelar, confirmar } = useAcciones();
+  const refConfirmacion = useRef<HTMLDivElement>(null);
+
+  // La confirmación vive en la tarjeta de acciones (arriba): al abrirla se trae a la vista
+  // (para el reintentar, cuyo botón está abajo en la lista de terminadas).
+  useEffect(() => {
+    if (pendiente) refConfirmacion.current?.scrollIntoView({ block: "nearest" });
+  }, [pendiente]);
 
   return (
     <section className="vista" data-testid="vista-vivo">
@@ -31,6 +41,39 @@ export function Vivo({ datos }: { datos: DatosVivo }) {
         </h1>
         {noche?.hasta && noche.activa && <p className="sub">Hasta las {horaCorta(noche.hasta)}</p>}
       </header>
+
+      <div className="tarjeta" data-testid="acciones">
+        <div className="fila acciones-fila">
+          {accionesVisibles(estadoPc).map((a) => (
+            <button key={a} type="button" className="boton" data-testid={`accion-${a}`} disabled={enviando} onClick={() => pedir(a)}>
+              {NOMBRE_ACCION[a]}
+            </button>
+          ))}
+        </div>
+        {pendiente && (
+          <div className="confirmacion" data-testid="confirmacion" ref={refConfirmacion}>
+            <p>{textoConfirmacion(pendiente.accion, pendiente.tarea)}</p>
+            <div className="fila">
+              <button type="button" className="boton" data-testid="confirmar-accion" disabled={enviando} onClick={confirmar}>
+                Confirmar
+              </button>
+              <button type="button" className="boton" data-testid="cancelar-accion" disabled={enviando} onClick={cancelar}>
+                Cancelar
+              </button>
+            </div>
+            {enviando && <p className="sub">Enviando…</p>}
+          </div>
+        )}
+        {resultado && (
+          <p
+            data-testid="resultado-accion"
+            data-ok={String(resultado.ok)}
+            className={`tarjeta resultado-accion${resultado.ok ? "" : " error-texto"}`}
+          >
+            {resultado.mensaje}
+          </p>
+        )}
+      </div>
 
       {vivo.tarea ? (
         <TareaEnCurso tarea={vivo.tarea} limite={limiteTarea(vivo)} ahora={ahora} />
@@ -64,6 +107,17 @@ export function Vivo({ datos }: { datos: DatosVivo }) {
                     {" "}
                     · <a href={t.pr}>PR</a>
                   </>
+                )}
+                {t.estado === "bloqueada" && (
+                  <button
+                    type="button"
+                    className="boton"
+                    data-testid="accion-reintentar"
+                    disabled={enviando}
+                    onClick={() => pedir("reintentar", t.id)}
+                  >
+                    {NOMBRE_ACCION.reintentar}
+                  </button>
                 )}
               </li>
             ))}
