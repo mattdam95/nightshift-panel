@@ -12,6 +12,7 @@ import { Espejo, estadoPcDeSonda } from "./espejo.js";
 import { ejecutarEnMac, medirMac } from "./mac.js";
 import { MAC_VACIA, crearProveedorMaquinas, macDeFixtures, pcDeFixtures } from "./maquinas.js";
 import { Seguidor } from "./seguidor.js";
+import { crearProveedorTarea, specDeFixtures, specDeGh } from "./tareas.js";
 
 /**
  * Variables de entorno:
@@ -42,6 +43,10 @@ const repos = (env.PANEL_REPOS ?? "mattdam95/monigotes,mattdam95/nightshift-pane
   .filter((r) => r !== "");
 const traerIssues = !conEspejo && env.PANEL_FIXTURES ? traerDeFixtures(env.PANEL_FIXTURES) : traerDeGh();
 const cola = crearProveedorCola({ repos, traer: traerIssues });
+const tarea = crearProveedorTarea({
+  almacen,
+  traerSpec: !conEspejo && env.PANEL_FIXTURES ? specDeFixtures(env.PANEL_FIXTURES) : specDeGh(),
+});
 
 let pc: FuentePc | undefined;
 let maquinas: (() => Promise<Maquinas>) | undefined;
@@ -77,7 +82,7 @@ if (conEspejo) {
   });
 }
 
-const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas });
+const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas, tarea });
 
 // SPA: los archivos del build de Vite, y cualquier otra ruta devuelve index.html (el router es del cliente).
 const web = join(raizProyecto, "dist", "web");
