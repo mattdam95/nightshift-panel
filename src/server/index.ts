@@ -10,6 +10,7 @@ import { accionSimulada, crearProveedorAcciones, type ProveedorAccion } from "./
 import { crearApp, type FuentePc } from "./app.js";
 import { crearProveedorCola, traerDeFixtures, traerDeGh } from "./cola.js";
 import { Espejo, estadoPcDeSonda } from "./espejo.js";
+import { crearProveedorEstadisticas } from "./estadisticas.js";
 import { ejecutarEnMac, medirMac } from "./mac.js";
 import { MAC_VACIA, crearProveedorMaquinas, macDeFixtures, pcDeFixtures } from "./maquinas.js";
 import { Seguidor } from "./seguidor.js";
@@ -48,6 +49,7 @@ const tarea = crearProveedorTarea({
   almacen,
   traerSpec: !conEspejo && env.PANEL_FIXTURES ? specDeFixtures(env.PANEL_FIXTURES) : specDeGh(),
 });
+const estadisticas = crearProveedorEstadisticas({ almacen });
 
 let pc: FuentePc | undefined;
 let maquinas: (() => Promise<Maquinas>) | undefined;
@@ -89,7 +91,7 @@ const accion: ProveedorAccion = espejoAccion
   ? crearProveedorAcciones({ nightshift: (a) => espejoAccion.nightshift(a), repos })
   : accionSimulada;
 
-const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas, tarea, accion });
+const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas, tarea, accion, estadisticas });
 
 // SPA: los archivos del build de Vite, y cualquier otra ruta devuelve index.html (el router es del cliente).
 const web = join(raizProyecto, "dist", "web");
