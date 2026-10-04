@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { hora } from "../web/src/formato.js";
 import type { DetalleTarea, ResultadoTarea } from "../src/contrato/api.js";
 import type { Etapa, Evento } from "../src/contrato/eventos.js";
 
@@ -15,9 +16,6 @@ import type { Etapa, Evento } from "../src/contrato/eventos.js";
 
 const RUTA_3 = "**/api/tareas/demo/panel/3";
 const RUTA_4 = "**/api/tareas/demo/panel/4";
-
-/** Mismo formato que `hora()` en `web/src/formato.ts`: hora argentina, HH:MM:SS. */
-const hora = (iso: string) => new Date(iso).toLocaleTimeString("es-AR", { hour12: false, timeZone: "America/Argentina/Buenos_Aires" });
 
 const ev = (ts: string, etapa: Etapa, tipo: string, datos: Record<string, unknown> = {}): Evento => ({
   ts,
