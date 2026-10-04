@@ -6,6 +6,7 @@ import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Maquinas } from "../contrato/api.js";
 import { Almacen } from "./almacen.js";
+import { accionSimulada, crearProveedorAcciones, type ProveedorAccion } from "./acciones.js";
 import { crearApp, type FuentePc } from "./app.js";
 import { crearProveedorCola, traerDeFixtures, traerDeGh } from "./cola.js";
 import { Espejo, estadoPcDeSonda } from "./espejo.js";
@@ -82,7 +83,13 @@ if (conEspejo) {
   });
 }
 
-const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas, tarea });
+// Acciones: con espejo se ejecutan de verdad en la PC y la Mac; sin espejo (dev y e2e) se simulan.
+const espejoAccion = espejo;
+const accion: ProveedorAccion = espejoAccion
+  ? crearProveedorAcciones({ nightshift: (a) => espejoAccion.nightshift(a), repos })
+  : accionSimulada;
+
+const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas, tarea, accion });
 
 // SPA: los archivos del build de Vite, y cualquier otra ruta devuelve index.html (el router es del cliente).
 const web = join(raizProyecto, "dist", "web");
