@@ -22,6 +22,6 @@ export function textoConfirmacion(accion: Accion, tarea?: string): string {
     case "juego":
       return "Modo juego: corta la tarea en curso y apaga el llama-server de la PC.";
     case "reintentar":
-      return `Reintentar ${tarea}: vuelve a la cola como lista para la próxima noche.`;
+      return `Reintentar ${tarea || "la tarea"}: vuelve a la cola como lista para la próxima noche.`;
   }
 }
