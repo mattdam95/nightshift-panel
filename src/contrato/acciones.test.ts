@@ -43,4 +43,7 @@ describe("textoConfirmacion", () => {
       "Reintentar demo/panel#1: vuelve a la cola como lista para la próxima noche.",
     );
   });
+  it("reintentar sin tarea no arma un texto con «undefined»", () => {
+    expect(textoConfirmacion("reintentar")).toBe("Reintentar la tarea: vuelve a la cola como lista para la próxima noche.");
+  });
 });
