@@ -408,3 +408,38 @@ a.boton {
   text-decoration: none;
   text-align: center;
 }
+
+/* Historial: bloque de estadísticas semanales. La fila de barras tiene alto fijo (80 px) y
+   cada barra ocupa el porcentaje de su tasa; sin tareas queda en 2 px (mínimo). */
+.estadisticas-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 8px 0 12px;
+}
+.estadistica {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.estadistica .valor {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.barras-semanas {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 80px;
+  padding-top: 8px;
+  border-top: 1px solid var(--borde);
+}
+.barra-semana {
+  flex: 1;
+  min-height: 2px;
+  border-radius: 3px;
+  background: var(--ok);
+}
+.barra-semana[data-vacia="true"] {
+  background: var(--borde);
+}
