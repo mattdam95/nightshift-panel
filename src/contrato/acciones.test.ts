@@ -43,4 +43,10 @@ describe("textoConfirmacion", () => {
       "Reintentar demo/panel#1: vuelve a la cola como lista para la próxima noche.",
     );
   });
+  // Higiene de la revisión del 2026-10-02 (criterio 2): elegí la opción (b) — sin `tarea`, texto fijo, sin «undefined».
+  it("reintentar sin tarea: no arma un texto con «undefined»", () => {
+    const texto = textoConfirmacion("reintentar");
+    expect(texto).not.toContain("undefined");
+    expect(texto).toBe("Reintentar la tarea: vuelve a la cola como lista para la próxima noche.");
+  });
 });
