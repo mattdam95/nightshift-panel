@@ -89,16 +89,14 @@ test("noche 2026-09-26: el único resultado muestra un icono-estado bloqueada", 
   await expect(resultado.locator('[data-testid="icono-estado"][data-estado="bloqueada"]')).toHaveCount(1);
 });
 
-test("tarea (detalle mockeado, estado lista): tarea-estado muestra un icono-estado lista y su texto sigue diciendo lista", async ({
-  page,
-}) => {
+test("tarea (detalle mockeado, estado lista): tarea-estado muestra un icono-estado lista y su texto dice Lista", async ({ page }) => {
   await page.route(RUTA_3, (route) => route.fulfill({ json: detalleOk }));
 
   await page.goto("/#/tarea/demo/panel/3");
   await expect(page.getByTestId("vista-tarea")).toBeVisible();
 
   const chip = page.getByTestId("tarea-estado");
-  await expect(chip).toContainText("lista");
+  await expect(chip).toContainText("Lista");
   await expect(chip.locator('[data-testid="icono-estado"][data-estado="lista"]')).toHaveCount(1);
 });
 
