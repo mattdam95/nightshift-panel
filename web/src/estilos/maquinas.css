@@ -1,0 +1,116 @@
+/* Máquinas V2: anillo de VRAM, bloques de la GPU, salud del LLM y barra de memoria de la Mac. */
+.maquina {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.maquina-cabecera h2 {
+  margin: 0;
+}
+
+/* Chip de conexión de la PC: el color lo da la variante, el punto toma el color del texto. */
+.chip.conexion-ok {
+  color: var(--ok);
+}
+.chip.conexion-caida {
+  color: var(--error);
+}
+.chip.conexion-local {
+  color: var(--sub);
+}
+.punto-chip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.vram-fila {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.anillo {
+  position: relative;
+  flex: none;
+  width: 84px;
+  height: 84px;
+}
+.anillo-pct {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  font-weight: 700;
+}
+.vram-texto {
+  display: flex;
+  flex-direction: column;
+}
+.vram-texto .sub {
+  font-size: 13px;
+}
+.vram-valor {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bloques-pc {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.bloques-pc .tile {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+}
+.bloques-pc .tile-valor {
+  font-size: 17px;
+}
+
+.llm-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 15px;
+}
+.salud {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.punto.salud-ok {
+  background: var(--ok);
+  box-shadow: 0 0 8px var(--ok);
+}
+.punto.salud-caido {
+  background: var(--error);
+}
+.salud:has(.salud-ok) {
+  color: var(--ok);
+}
+.salud:has(.salud-caido) {
+  color: var(--error);
+}
+
+.mac-memoria {
+  font-size: 15px;
+  color: var(--sub);
+}
+.barra-mac {
+  height: 6px;
+}
+.barra-mac > div {
+  height: 100%;
+  background: var(--mac);
+}
+.mac-nota {
+  margin: 0;
+  font-size: 15px;
+}

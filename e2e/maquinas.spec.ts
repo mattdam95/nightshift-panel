@@ -59,7 +59,7 @@ function conTemperatura(temperaturaC: number): Maquinas {
 test("muestra la PC (temperatura, potencia, VRAM con barra, tok/s) y la Mac (memoria con barra) con su conexión", async ({ page }) => {
   await abrirCon(page, MAQUINAS);
 
-  await expect(page.getByTestId("pc-conexion")).toHaveText("conectada");
+  await expect(page.getByTestId("pc-conexion")).toHaveText("Conectada");
   await expect(page.getByTestId("pc-temperatura")).toContainText("68 °C");
   await expect(page.getByTestId("pc-potencia")).toContainText("187 W");
   await expect(page.getByTestId("pc-vram")).toContainText("12,0 / 16,0 GiB");
@@ -121,14 +121,14 @@ test("los valores null muestran «—», sin barras, y ninguna tarjeta muestra �
   }
 });
 
-test("con pc.conexion «sin-espejo», pc-conexion dice «datos locales»", async ({ page }) => {
+test("con pc.conexion «sin-espejo», pc-conexion dice «Datos locales»", async ({ page }) => {
   await abrirCon(page, { ...MAQUINAS, pc: { ...MAQUINAS.pc, conexion: "sin-espejo" } });
-  await expect(page.getByTestId("pc-conexion")).toContainText("datos locales");
+  await expect(page.getByTestId("pc-conexion")).toContainText("Datos locales");
 });
 
-test("con pc.conexion «desconectada», pc-conexion dice «desconectada»", async ({ page }) => {
+test("con pc.conexion «desconectada», pc-conexion dice «Desconectada»", async ({ page }) => {
   await abrirCon(page, { ...MAQUINAS, pc: { ...MAQUINAS.pc, conexion: "desconectada" } });
-  await expect(page.getByTestId("pc-conexion")).toContainText("desconectada");
+  await expect(page.getByTestId("pc-conexion")).toContainText("Desconectada");
 });
 
 test("polling: pide al abrir, repite cada 15 s mientras la vista está abierta y deja de pedir al salir", async ({ page }) => {
