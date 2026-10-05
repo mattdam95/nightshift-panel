@@ -7,13 +7,14 @@ import { Noche } from "./vistas/Noche";
 import { Tarea } from "./vistas/Tarea";
 import { Vivo } from "./vistas/Vivo";
 import { Proximamente } from "./componentes/Proximamente";
+import { Icono } from "./componentes/Icono";
 
 /** Pestañas de la barra inferior. Las que no tienen vista todavía muestran "Próximamente" (las arman las issues `agent`). */
 const PESTANAS = [
-  { vista: "vivo", nombre: "En vivo", icono: "●" },
-  { vista: "cola", nombre: "Cola", icono: "☰" },
-  { vista: "historial", nombre: "Historial", icono: "◷" },
-  { vista: "maquinas", nombre: "Máquinas", icono: "▣" },
+  { vista: "vivo", nombre: "En vivo", icono: "vivo" },
+  { vista: "cola", nombre: "Cola", icono: "cola" },
+  { vista: "historial", nombre: "Historial", icono: "historial" },
+  { vista: "maquinas", nombre: "Máquinas", icono: "maquinas" },
 ] as const;
 
 const VISTAS = new Set(["vivo", "cola", "historial", "noche", "tarea", "maquinas"]);
@@ -32,15 +33,17 @@ export function App() {
         <span className="sub"> · PC {vivo.pc === "sin-espejo" ? "(datos locales)" : vivo.pc}</span>
       </div>
 
-      <main>
-        {ruta.vista === "vivo" && <Vivo datos={vivo} />}
-        {ruta.vista === "cola" && <Cola params={ruta.params} />}
-        {ruta.vista === "historial" && <Historial params={ruta.params} />}
-        {ruta.vista === "noche" && <Noche params={ruta.params} />}
-        {ruta.vista === "tarea" && <Tarea params={ruta.params} />}
-        {ruta.vista === "maquinas" && <Maquinas params={ruta.params} />}
-        {!VISTAS.has(ruta.vista) && <Proximamente vista={ruta.vista} />}
-      </main>
+      <div className="contenido" data-testid="contenido">
+        <main>
+          {ruta.vista === "vivo" && <Vivo datos={vivo} />}
+          {ruta.vista === "cola" && <Cola params={ruta.params} />}
+          {ruta.vista === "historial" && <Historial params={ruta.params} />}
+          {ruta.vista === "noche" && <Noche params={ruta.params} />}
+          {ruta.vista === "tarea" && <Tarea params={ruta.params} />}
+          {ruta.vista === "maquinas" && <Maquinas params={ruta.params} />}
+          {!VISTAS.has(ruta.vista) && <Proximamente vista={ruta.vista} />}
+        </main>
+      </div>
 
       <nav className="pestanas" aria-label="Secciones">
         {PESTANAS.map((p) => (
@@ -50,7 +53,7 @@ export function App() {
             aria-current={ruta.vista === p.vista ? "page" : undefined}
             data-testid={`pestana-${p.vista}`}
           >
-            <span aria-hidden="true">{p.icono}</span>
+            <Icono nombre={p.icono} />
             {p.nombre}
           </a>
         ))}
