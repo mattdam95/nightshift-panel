@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hora, horaCorta } from "../web/src/formato.js";
+import { fechaCorta, hora, horaCorta } from "../web/src/formato.js";
 
 /**
  * Aceptación de los arreglos chicos (spec: Arreglos chicos — horas).
@@ -19,5 +19,19 @@ describe("hora y horaCorta: medianoche sale 00:xx, no 24:xx", () => {
 
   it('hora("2026-10-03T23:42:30.000Z") es "20:42:30" (la hora normal no cambia)', () => {
     expect(hora("2026-10-03T23:42:30.000Z")).toBe("20:42:30");
+  });
+});
+
+describe("fechaCorta: «Dom 27 sep» a partir de AAAA-MM-DD, sin zona horaria", () => {
+  it.each([
+    ["2026-09-27", "Dom 27 sep"],
+    ["2026-10-05", "Lun 5 oct"],
+    ["2026-09-26", "Sáb 26 sep"],
+    ["2026-09-30", "Mié 30 sep"],
+    ["2026-01-01", "Jue 1 ene"],
+    ["2026-12-25", "Vie 25 dic"],
+    ["2026-09-29", "Mar 29 sep"],
+  ])("%s → %s", (fecha, esperado) => {
+    expect(fechaCorta(fecha)).toBe(esperado);
   });
 });

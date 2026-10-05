@@ -66,8 +66,8 @@ test("historial: la fila 2026-09-27 muestra un icono-estado lista y la 2026-09-2
 
   const filas = page.getByTestId("noche");
   await expect(filas).toHaveCount(2);
-  await expect(filas.first()).toContainText("2026-09-27");
-  await expect(filas.nth(1)).toContainText("2026-09-26");
+  await expect(filas.first().getByTestId("fecha-noche")).toHaveAttribute("datetime", "2026-09-27");
+  await expect(filas.nth(1).getByTestId("fecha-noche")).toHaveAttribute("datetime", "2026-09-26");
 
   const lista = filas.first().locator('[data-testid="icono-estado"][data-estado="lista"]');
   await expect(lista).toHaveCount(1);

@@ -1,0 +1,84 @@
+/* Historial V2: estadísticas en bloques, barras con la fecha debajo y noches como lista agrupada. */
+.estadisticas-titulo {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sub);
+}
+.estadisticas-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.estadisticas-resumen .tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+}
+.estadisticas-resumen .tile-valor {
+  font-size: 18px;
+}
+.estadisticas-resumen .tile-valor.valor-ok {
+  color: var(--ok);
+}
+
+/* Barras: alto fijo (96 px); cada una ocupa el porcentaje de su tasa, con 4 px de mínimo. */
+.barras-semanas {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: end;
+  gap: 6px;
+  height: 96px;
+}
+.barra-semana {
+  min-height: 4px;
+  border-radius: 8px;
+  background: var(--ok);
+}
+.barra-semana[data-vacia="true"] {
+  background: var(--relleno);
+}
+.etiquetas-semanas {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+}
+.etiquetas-semanas span {
+  font-size: 11px;
+  text-align: center;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Lista de noches: la más nueva primero. */
+.noche {
+  min-height: 58px;
+}
+.noche-fecha {
+  display: flex;
+  flex-direction: column;
+}
+.noche .fecha {
+  font-size: 17px;
+}
+.noche-fecha .sub {
+  font-size: 13px;
+}
+.noche .estados {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.noche .estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.noche-flecha {
+  display: inline-flex;
+  color: var(--ter);
+}

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import type { Estadisticas, ResumenNoche } from "../../../src/contrato/api";
 import { obtener } from "../api";
-import { IconoEstado } from "../componentes/Icono";
+import { Icono, IconoEstado, RUTAS_ESTADO } from "../componentes/Icono";
+import "../estilos/historial.css";
+import { fechaCorta } from "../formato";
 import { enlace } from "../ruta";
 
 type Semana = Estadisticas["semanas"][number];
@@ -17,8 +19,8 @@ const minutosTexto = (s: Semana) => (s.tareas === 0 ? "—" : `${s.minutosPromed
 /** «2,0 rondas» (siempre un decimal, es-AR); «—» si la semana no tiene tareas. */
 const rondasTexto = (s: Semana) => (s.tareas === 0 ? "—" : `${s.rondasRevisionPromedio.toLocaleString("es-AR", UN_DECIMAL)} rondas`);
 
-/** «28/09» a partir de «2026-09-28». */
-const diaMes = (desde: string) => `${desde.slice(8, 10)}/${desde.slice(5, 7)}`;
+/** «28/9» a partir de «2026-09-28» (día y mes sin ceros a la izquierda). */
+const diaMes = (desde: string) => `${Number(desde.slice(8, 10))}/${Number(desde.slice(5, 7))}`;
 
 /**
  * Bloque de estadísticas semanales: «Esta semana» (la última del arreglo) y una barra por
@@ -27,30 +29,31 @@ const diaMes = (desde: string) => `${desde.slice(8, 10)}/${desde.slice(5, 7)}`;
 function BloqueEstadisticas({ estadisticas }: { estadisticas: Estadisticas }) {
   const actual = estadisticas.semanas[estadisticas.semanas.length - 1];
   if (actual === undefined) return null;
+  const columnas = { gridTemplateColumns: `repeat(${estadisticas.semanas.length}, minmax(0, 1fr))` };
   return (
     <div className="tarjeta" data-testid="estadisticas">
-      <h2>Esta semana</h2>
+      <p className="estadisticas-titulo">Esta semana</p>
       <div className="estadisticas-resumen">
-        <div className="estadistica">
-          <span className="sub">Tasa de éxito</span>
-          <span className="valor" data-testid="estadisticas-tasa">
+        <div className="tile">
+          <span className="tile-etiqueta">Éxito</span>
+          <span className="tile-valor valor-ok" data-testid="estadisticas-tasa">
             {tasaTexto(actual)}
           </span>
         </div>
-        <div className="estadistica">
-          <span className="sub">Minutos por tarea</span>
-          <span className="valor" data-testid="estadisticas-minutos">
+        <div className="tile">
+          <span className="tile-etiqueta">Por tarea</span>
+          <span className="tile-valor" data-testid="estadisticas-minutos">
             {minutosTexto(actual)}
           </span>
         </div>
-        <div className="estadistica">
-          <span className="sub">Rondas de revisión</span>
-          <span className="valor" data-testid="estadisticas-rondas">
+        <div className="tile">
+          <span className="tile-etiqueta">Revisión</span>
+          <span className="tile-valor" data-testid="estadisticas-rondas">
             {rondasTexto(actual)}
           </span>
         </div>
       </div>
-      <div className="barras-semanas">
+      <div className="barras-semanas" style={columnas}>
         {estadisticas.semanas.map((s) => {
           const pct = s.tareas === 0 ? 0 : Math.round(s.tasaExito * 100);
           return (
@@ -66,6 +69,13 @@ function BloqueEstadisticas({ estadisticas }: { estadisticas: Estadisticas }) {
             />
           );
         })}
+      </div>
+      <div className="etiquetas-semanas" style={columnas}>
+        {estadisticas.semanas.map((s) => (
+          <span key={s.desde} data-testid="etiqueta-semana">
+            {diaMes(s.desde)}
+          </span>
+        ))}
       </div>
     </div>
   );
@@ -120,25 +130,32 @@ export function Historial(_props: { params: string[] }) {
       {noches !== null && noches.length === 0 && <p className="vacio">Todavía no hay noches registradas.</p>}
 
       {noches && noches.length > 0 && (
-        <ul className="lista-noches">
+        <ul className="grupo">
           {noches.map((n) => (
             <li key={n.fecha}>
-              <a className="noche" href={enlace("noche", n.fecha)} data-testid="noche">
-                <span className="fecha">{n.fecha}</span>
-                <span className="sub">{n.tareas === 1 ? "1 tarea" : `${n.tareas} tareas`}</span>
+              <a className="grupo-fila noche" href={enlace("noche", n.fecha)} data-testid="noche">
+                <span className="noche-fecha">
+                  <time className="fecha" data-testid="fecha-noche" dateTime={n.fecha}>
+                    {fechaCorta(n.fecha)}
+                  </time>
+                  <span className="sub">{n.tareas === 1 ? "1 tarea" : `${n.tareas} tareas`}</span>
+                </span>
                 <span className="estados">
                   {Object.entries(n.estados).map(([estado, cantidad]) => (
-                    <span key={estado} className={`estado ${estado}`}>
+                    <span key={estado} className={`estado ${estado}`} style={{ color: RUTAS_ESTADO[estado]?.color ?? "var(--sub)" }}>
                       <IconoEstado estado={estado} />
-                      {cantidad > 1 ? ` ×${cantidad}` : ""}
+                      {cantidad}
                     </span>
                   ))}
-                </span>
-                {n.fin === null && (
-                  <span className="chip en-curso" data-testid="noche-en-curso">
-                    En curso
+                  {n.fin === null && (
+                    <span className="chip en-curso" data-testid="noche-en-curso">
+                      En curso
+                    </span>
+                  )}
+                  <span className="noche-flecha" aria-hidden="true">
+                    <Icono nombre="derecha" tam={18} />
                   </span>
-                )}
+                </span>
               </a>
             </li>
           ))}
