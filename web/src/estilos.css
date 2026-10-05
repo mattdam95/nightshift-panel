@@ -65,9 +65,22 @@ h2 {
   font-size: 0.8rem;
 }
 
+/* Columna de alto fijo: la página nunca scrollea, solo `.contenido`.
+   Sin padding de abajo: la barra de pestañas ya cuenta el safe-area de iOS. */
 .app {
-  min-height: 100dvh;
-  padding: env(safe-area-inset-top) 0 calc(64px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--fondo);
+  padding-top: env(safe-area-inset-top);
+}
+/* El único elemento que scrollea: el rebote de iOS queda contenido acá. */
+.contenido {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 main {
   max-width: 720px;
@@ -89,10 +102,8 @@ main {
   padding: 2rem 0;
 }
 
+/* Queda primera en la columna, debajo de la zona segura: sin sticky ni fixed. */
 .estado-conexion {
-  position: sticky;
-  top: 0;
-  z-index: 2;
   padding: 6px 16px;
   font-size: 0.8rem;
   background: var(--fondo);
@@ -299,11 +310,9 @@ main {
   color: var(--error);
 }
 
+/* Última en la columna: sin position fixed, el flex la deja pegada abajo. */
 .pestanas {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  flex: none;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   background: var(--tarjeta);
