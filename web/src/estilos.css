@@ -1,31 +1,22 @@
-/* Mobile-first. Oscuro por defecto (se usa de noche); claro si el sistema lo pide. */
+/* Mobile-first. Solo oscuro (iOS 26 / Liquid Glass): se usa de noche y desde el iPhone. */
 :root {
-  --fondo: #0d1117;
-  --tarjeta: #161b22;
-  --borde: #30363d;
-  --texto: #e6edf3;
-  --sub: #8b949e;
-  --acento: #e3b341;
-  --ok: #3fb950;
-  --error: #f85149;
-  --pc: #58a6ff;
-  --mac: #bc8cff;
+  --fondo: #000000;
+  --tarjeta: #1c1c1e;
+  --tarjeta-2: #2c2c2e;
+  --borde: #38383a;
+  --separador: rgba(84, 84, 88, 0.6);
+  --texto: #ffffff;
+  --sub: rgba(235, 235, 245, 0.6);
+  --ter: rgba(235, 235, 245, 0.3);
+  --relleno: rgba(120, 120, 128, 0.32);
+  --acento: #ffd60a;
+  --ok: #30d158;
+  --error: #ff453a;
+  --pc: #0a84ff;
+  --mac: #bf5af2;
+  --celeste: #64d2ff;
+  --gris: #8e8e93;
   color-scheme: dark;
-}
-@media (prefers-color-scheme: light) {
-  :root {
-    --fondo: #f6f8fa;
-    --tarjeta: #ffffff;
-    --borde: #d0d7de;
-    --texto: #1f2328;
-    --sub: #59636e;
-    --acento: #9a6700;
-    --ok: #1a7f37;
-    --error: #cf222e;
-    --pc: #0969da;
-    --mac: #8250df;
-    color-scheme: light;
-  }
 }
 
 * {
@@ -37,11 +28,12 @@ body {
   background: var(--fondo);
   color: var(--texto);
   font:
-    16px/1.4 -apple-system,
+    17px/1.3 -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     system-ui,
     sans-serif;
+  letter-spacing: -0.2px;
   -webkit-text-size-adjust: 100%;
 }
 a {
@@ -51,10 +43,17 @@ h1 {
   font-size: 1.15rem;
   margin: 0;
 }
+.cabecera h1 {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  line-height: 1.15;
+}
 h2 {
-  font-size: 0.95rem;
-  margin: 1rem 0 0.4rem;
-  color: var(--sub);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 8px 4px 0;
+  color: var(--texto);
 }
 .sub {
   color: var(--sub);
@@ -152,14 +151,15 @@ main {
 }
 
 .tarjeta {
+  border: 0;
+  border-radius: 26px;
+  padding: 16px;
   background: var(--tarjeta);
-  border: 1px solid var(--borde);
-  border-radius: 12px;
-  padding: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   overflow-wrap: anywhere;
 }
 .tarjeta.destacada {
-  border-color: var(--acento);
+  box-shadow: inset 0 0 0 1px rgba(255, 214, 10, 0.35);
 }
 .fila {
   display: flex;
@@ -171,10 +171,16 @@ main {
   margin: 4px 0 8px;
 }
 .chip {
-  font-size: 0.75rem;
-  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
   border-radius: 999px;
-  border: 1px solid currentColor;
+  font-size: 13px;
+  font-weight: 600;
+  background: color-mix(in srgb, currentColor 18%, transparent);
 }
 .chip.pc {
   color: var(--pc);
@@ -243,15 +249,29 @@ main {
 .pregunta {
   margin: 8px 0 0;
 }
+/* Cápsula de vidrio: las propiedades de .capsula más las de .vidrio (los botones de hoy cambian solos). */
 .boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   min-height: 44px;
-  padding: 8px 16px;
-  background: var(--fondo);
-  border: 1px solid var(--borde);
-  border-radius: 12px;
-  color: var(--texto);
+  padding: 0 16px;
+  border-radius: 999px;
   font: inherit;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  color: var(--texto);
+  background: rgba(44, 44, 48, 0.52);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 10px 30px rgba(0, 0, 0, 0.45);
 }
 /* Después de .boton: tienen la misma especificidad y el último gana. */
 .boton-juego {
@@ -346,6 +366,104 @@ main {
 }
 .feed li.error {
   color: var(--error);
+}
+
+/* Base V2: vidrio, formas y bloques compartidos por todas las pantallas. */
+.vidrio {
+  background: rgba(44, 44, 48, 0.52);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 10px 30px rgba(0, 0, 0, 0.45);
+}
+/* .capsula y .boton-redondo van antes que .vidrio-*: igual especificidad, gana el último (el color de los vidrios de color). */
+.capsula {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--texto);
+}
+.boton-redondo {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--texto);
+}
+.vidrio-amarillo,
+.vidrio-azul {
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.vidrio-amarillo {
+  background: rgba(255, 214, 10, 0.16);
+  border: 1px solid rgba(255, 214, 10, 0.38);
+  color: var(--acento);
+}
+.vidrio-azul {
+  background: rgba(10, 132, 255, 0.16);
+  border: 1px solid rgba(10, 132, 255, 0.38);
+  color: var(--pc);
+}
+/* Lista agrupada de iOS: filas separadas por una línea fina. */
+.grupo {
+  background: var(--tarjeta);
+  border-radius: 26px;
+  overflow: hidden;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.grupo > * + * {
+  border-top: 0.5px solid var(--separador);
+}
+.grupo-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 10px 16px;
+  color: var(--texto);
+  text-decoration: none;
+}
+.tile {
+  background: var(--tarjeta-2);
+  border-radius: 18px;
+  padding: 12px 14px;
+}
+.tile-etiqueta {
+  font-size: 13px;
+  color: var(--sub);
+}
+.tile-valor {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+/* Fondo de barras y líneas. */
+.pista {
+  background: var(--relleno);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 /* Última en la columna: sin position fixed, el flex la deja pegada abajo. */

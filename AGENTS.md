@@ -32,6 +32,8 @@ e2e/            Playwright (iPhone 15, Chromium). Corre el build real con PANEL_
   de ejemplo en `test/fixtures/lab/logs/`, que sea **anterior a 2026-09-26**.
 - UI: todo elemento que chequee un test lleva `data-testid`. Usá las variables CSS de `estilos.css`, nada de colores sueltos.
   Tiene que verse bien a 375 px de ancho sin scroll horizontal, y los toques necesitan al menos 44 px de alto.
+- **`backdrop-filter`:** escribí `-webkit-backdrop-filter` ANTES que `backdrop-filter`. Con el orden inverso el minificador de
+  Vite (lightningcss) descarta la versión sin prefijo y Chrome/Firefox dejan de dibujar el vidrio (verificado).
 - Textos de la UI en español rioplatense. Horas con `web/src/formato.ts`.
 - Rutas de archivos en tests: `fileURLToPath(new URL("...", import.meta.url))`, nunca `new URL(...).pathname`.
   Los fixtures se leen con rutas relativas a la raíz del repo (`test/fixtures/...`): vitest y Playwright corren desde ahí.
