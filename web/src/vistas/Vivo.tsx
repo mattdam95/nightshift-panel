@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { NOMBRE_ACCION, accionesVisibles, textoConfirmacion } from "../../../src/contrato/acciones";
 import { ETAPAS_TAREA } from "../../../src/contrato/eventos";
 import { limiteTarea, type TareaVivo } from "../../../src/contrato/vivo";
-import { IconoEstado } from "../componentes/Icono";
+import { Icono, IconoEstado } from "../componentes/Icono";
 import { duracion, hora, horaCorta, NOMBRE_ETAPA } from "../formato";
 import { enlace } from "../ruta";
 import { useAcciones } from "../useAcciones";
@@ -36,23 +36,7 @@ export function Vivo({ datos }: { datos: DatosVivo }) {
       <header className="cabecera">
         <div className="cabecera-acciones">
           <button type="button" className="boton boton-juego" data-testid="accion-juego" disabled={enviando} onClick={() => pedir("juego")}>
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M6 11h4" />
-              <path d="M8 9v4" />
-              <circle cx="15" cy="12" r="1" />
-              <circle cx="18" cy="10" r="1" />
-              <path d="M17.3 5H6.7a4 4 0 0 0-4 3.6l-1 8.7A2.2 2.2 0 0 0 3.9 20c.7 0 1.4-.4 1.8-1L7 17h10l1.3 2c.4.6 1.1 1 1.8 1a2.2 2.2 0 0 0 2.2-2.7l-1-8.7A4 4 0 0 0 17.3 5z" />
-            </svg>
+            <Icono nombre="juego" tam={22} />
             {NOMBRE_ACCION.juego}
           </button>
         </div>

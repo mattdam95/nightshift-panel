@@ -103,7 +103,7 @@ test("maquinas: en oscuro, el punto de salud «ok» es verde (var(--ok))", async
 
   const punto = page.getByTestId("salud-llm").locator(".punto");
   await expect(punto).toHaveCount(1);
-  await expect(punto).toHaveCSS("background-color", "rgb(63, 185, 80)");
+  await expect(punto).toHaveCSS("background-color", "rgb(48, 209, 88)");
 });
 
 test("maquinas: en oscuro, el punto de salud «caído» es rojo (var(--error))", async ({ page }) => {
@@ -112,7 +112,7 @@ test("maquinas: en oscuro, el punto de salud «caído» es rojo (var(--error))",
 
   const punto = page.getByTestId("salud-llm").locator(".punto");
   await expect(punto).toHaveCount(1);
-  await expect(punto).toHaveCSS("background-color", "rgb(248, 81, 73)");
+  await expect(punto).toHaveCSS("background-color", "rgb(255, 69, 58)");
 });
 
 test("tarea: la nota del agente con salto de línea se muestra en dos líneas (white-space: pre-wrap)", async ({ page }) => {
