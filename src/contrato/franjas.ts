@@ -96,3 +96,35 @@ export function filasPorTarea(tramos: Franja[], ini: number, fin: number): FilaT
   }
   return [...filas.values()];
 }
+
+/** Ancho mínimo (en % del eje) con el que se toma un segmento casi nulo al elegir con el dedo. */
+const ANCHO_MIN_SEGMENTO = 0.6;
+
+/**
+ * Índice del segmento que contiene `pct` (0 a 100). Un segmento casi nulo se toma con un ancho mínimo de 0,6. Si varios lo
+ * contienen (la revisión de la Mac sobre otra etapa) gana el último, que es el que se dibuja encima. Si ninguno lo contiene,
+ * el de centro más cercano; sin segmentos, -1.
+ */
+export function segmentoEn(segmentos: SegmentoFila[], pct: number): number {
+  let elegido = -1;
+  segmentos.forEach((s, i) => {
+    if (pct >= s.izquierda && pct <= s.izquierda + Math.max(s.ancho, ANCHO_MIN_SEGMENTO)) elegido = i;
+  });
+  if (elegido >= 0) return elegido;
+
+  let mejor = -1;
+  let distancia = Infinity;
+  segmentos.forEach((s, i) => {
+    const d = Math.abs(s.izquierda + Math.max(s.ancho, ANCHO_MIN_SEGMENTO) / 2 - pct);
+    if (d < distancia) {
+      distancia = d;
+      mejor = i;
+    }
+  });
+  return mejor;
+}
+
+/** Los segmentos ampliados `zoom` veces alrededor de `pct`, que queda en el 50 % de la lupa. */
+export function segmentosLupa(segmentos: SegmentoFila[], pct: number, zoom: number): { izquierda: number; ancho: number }[] {
+  return segmentos.map((s) => ({ izquierda: (s.izquierda - pct) * zoom + 50, ancho: s.ancho * zoom }));
+}
