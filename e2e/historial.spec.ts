@@ -25,12 +25,12 @@ test("historial: cada fila muestra la fecha, la cantidad de tareas y un ícono p
   // 2026-09-27: una tarea en estado lista.
   await expect(filas.first()).toContainText("2026-09-27");
   await expect(filas.first()).toContainText("1 tarea");
-  await expect(filas.first()).toContainText("✅");
+  await expect(filas.first().locator('[data-testid="icono-estado"][data-estado="lista"]')).toHaveCount(1);
 
   // 2026-09-26: una tarea en estado bloqueada.
   await expect(filas.nth(1)).toContainText("2026-09-26");
   await expect(filas.nth(1)).toContainText("1 tarea");
-  await expect(filas.nth(1)).toContainText("⛔");
+  await expect(filas.nth(1).locator('[data-testid="icono-estado"][data-estado="bloqueada"]')).toHaveCount(1);
 });
 
 test("historial: la noche sin fin (en curso) se marca con noche-en-curso", async ({ page }) => {
@@ -64,7 +64,7 @@ test("noche: lista cada tarea con ícono de estado, título, duración, turnos y
   const resultado = page.getByTestId("resultado");
   await expect(resultado).toHaveCount(1);
   await expect(resultado).toContainText("Esqueleto");
-  await expect(resultado).toContainText("⛔");
+  await expect(resultado.locator('[data-testid="icono-estado"][data-estado="bloqueada"]')).toHaveCount(1);
   await expect(resultado).toContainText("25 min"); // duracion(Date.parse(fin) - Date.parse(inicio))
   await expect(resultado).toContainText(/\b5\b/); // turnos
   await expect(resultado).toContainText(/1[.,]?110/); // tokens

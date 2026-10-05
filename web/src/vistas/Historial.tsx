@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Estadisticas, ResumenNoche } from "../../../src/contrato/api";
 import { obtener } from "../api";
-import { ICONO_ESTADO } from "../formato";
+import { IconoEstado } from "../componentes/Icono";
 import { enlace } from "../ruta";
 
 type Semana = Estadisticas["semanas"][number];
@@ -129,7 +129,7 @@ export function Historial(_props: { params: string[] }) {
                 <span className="estados">
                   {Object.entries(n.estados).map(([estado, cantidad]) => (
                     <span key={estado} className={`estado ${estado}`}>
-                      {ICONO_ESTADO[estado] ?? "•"}
+                      <IconoEstado estado={estado} />
                       {cantidad > 1 ? ` ×${cantidad}` : ""}
                     </span>
                   ))}

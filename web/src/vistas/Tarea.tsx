@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import type { DetalleTarea, ResultadoTarea } from "../../../src/contrato/api";
 import { agruparPorEtapa, pasosDeVerificacion } from "../../../src/contrato/tarea";
 import { Diff } from "../componentes/Diff";
+import { IconoEstado } from "../componentes/Icono";
 import { obtener, obtenerTexto } from "../api";
-import { duracion, hora, ICONO_ESTADO, NOMBRE_ETAPA } from "../formato";
+import { duracion, hora, NOMBRE_ETAPA } from "../formato";
 
 export function Tarea({ params }: { params: string[] }) {
   const [owner, repo, n] = params;
@@ -72,7 +73,13 @@ export function Tarea({ params }: { params: string[] }) {
             <div className="fila">
               <h1 data-testid="tarea-titulo">{resultado ? resultado.titulo : detalle.id}</h1>
               <span className={resultado ? "chip" : "chip en-curso"} data-testid="tarea-estado">
-                {resultado ? `${ICONO_ESTADO[resultado.estado] ?? ""} ${resultado.estado}` : "En curso"}
+                {resultado ? (
+                  <>
+                    <IconoEstado estado={resultado.estado} /> {resultado.estado}
+                  </>
+                ) : (
+                  "En curso"
+                )}
               </span>
             </div>
           </header>

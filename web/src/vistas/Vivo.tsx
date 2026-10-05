@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { NOMBRE_ACCION, accionesVisibles, textoConfirmacion } from "../../../src/contrato/acciones";
 import { ETAPAS_TAREA } from "../../../src/contrato/eventos";
 import { limiteTarea, type TareaVivo } from "../../../src/contrato/vivo";
-import { duracion, hora, horaCorta, ICONO_ESTADO, NOMBRE_ETAPA } from "../formato";
+import { IconoEstado } from "../componentes/Icono";
+import { duracion, hora, horaCorta, NOMBRE_ETAPA } from "../formato";
 import { enlace } from "../ruta";
 import { useAcciones } from "../useAcciones";
 import type { Vivo as DatosVivo } from "../useVivo";
@@ -100,7 +101,7 @@ export function Vivo({ datos }: { datos: DatosVivo }) {
           <ul className="lista-simple">
             {[...vivo.terminadas].reverse().map((t) => (
               <li key={t.id + t.inicio} data-testid="terminada">
-                <span>{ICONO_ESTADO[t.estado] ?? "•"}</span> <a href={enlace("tarea", ...t.id.replace("#", "/").split("/"))}>{t.id}</a>{" "}
+                <IconoEstado estado={t.estado} /> <a href={enlace("tarea", ...t.id.replace("#", "/").split("/"))}>{t.id}</a>{" "}
                 <span className="sub">{t.titulo || t.motivo}</span>
                 {t.pr && (
                   <>
