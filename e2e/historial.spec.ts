@@ -14,8 +14,8 @@ test("historial: lista una fila por noche, la más nueva primero", async ({ page
 
   const filas = page.getByTestId("noche");
   await expect(filas).toHaveCount(2);
-  await expect(filas.first()).toContainText("2026-09-27");
-  await expect(filas.nth(1)).toContainText("2026-09-26");
+  await expect(filas.first().getByTestId("fecha-noche")).toHaveAttribute("datetime", "2026-09-27");
+  await expect(filas.nth(1).getByTestId("fecha-noche")).toHaveAttribute("datetime", "2026-09-26");
 });
 
 test("historial: cada fila muestra la fecha, la cantidad de tareas y un ícono por estado", async ({ page }) => {
@@ -23,12 +23,12 @@ test("historial: cada fila muestra la fecha, la cantidad de tareas y un ícono p
   const filas = page.getByTestId("noche");
 
   // 2026-09-27: una tarea en estado lista.
-  await expect(filas.first()).toContainText("2026-09-27");
+  await expect(filas.first().getByTestId("fecha-noche")).toHaveAttribute("datetime", "2026-09-27");
   await expect(filas.first()).toContainText("1 tarea");
   await expect(filas.first().locator('[data-testid="icono-estado"][data-estado="lista"]')).toHaveCount(1);
 
   // 2026-09-26: una tarea en estado bloqueada.
-  await expect(filas.nth(1)).toContainText("2026-09-26");
+  await expect(filas.nth(1).getByTestId("fecha-noche")).toHaveAttribute("datetime", "2026-09-26");
   await expect(filas.nth(1)).toContainText("1 tarea");
   await expect(filas.nth(1).locator('[data-testid="icono-estado"][data-estado="bloqueada"]')).toHaveCount(1);
 });

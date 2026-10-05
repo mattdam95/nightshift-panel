@@ -107,8 +107,8 @@ test("si el pedido de estadísticas responde 500, se ve error-estadisticas y la 
   // La lista de noches (pedido independiente) sigue mostrando sus 2 filas del fixture.
   const filas = page.getByTestId("noche");
   await expect(filas).toHaveCount(2);
-  await expect(filas.first()).toContainText("2026-09-27");
-  await expect(filas.nth(1)).toContainText("2026-09-26");
+  await expect(filas.first().getByTestId("fecha-noche")).toHaveAttribute("datetime", "2026-09-27");
+  await expect(filas.nth(1).getByTestId("fecha-noche")).toHaveAttribute("datetime", "2026-09-26");
 });
 
 test("a 375 px de ancho, #/historial con el bloque no tiene scroll horizontal", async ({ page }) => {

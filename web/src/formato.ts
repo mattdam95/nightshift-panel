@@ -23,3 +23,14 @@ export const NOMBRE_ETAPA: Record<string, string> = {
   revision: "revisión",
   entrega: "entrega",
 };
+
+const DIAS_CORTOS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+const MESES_CORTOS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+
+/** "2026-09-27" → "Dom 27 sep". Se calcula con Date.UTC, sin zona horaria; un texto que no sea AAAA-MM-DD vuelve igual. */
+export function fechaCorta(aaaammdd: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(aaaammdd);
+  if (!m) return aaaammdd;
+  const dia = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))).getUTCDay();
+  return `${DIAS_CORTOS[dia]} ${Number(m[3])} ${MESES_CORTOS[Number(m[2]) - 1]}`;
+}
