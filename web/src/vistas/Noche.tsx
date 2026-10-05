@@ -3,7 +3,8 @@ import type { DetalleNoche, ResultadoTarea } from "../../../src/contrato/api";
 import type { Evento } from "../../../src/contrato/eventos";
 import { obtener } from "../api";
 import { IconoEstado } from "../componentes/Icono";
-import { LineaTiempo } from "../componentes/LineaTiempo";
+import { LineaTiempoTareas } from "../componentes/LineaTiempoTareas";
+import "../estilos/noche.css";
 import { duracion } from "../formato";
 
 export function Noche({ params }: { params: string[] }) {
@@ -56,7 +57,7 @@ export function Noche({ params }: { params: string[] }) {
 
       {detalle && (
         <>
-          <LineaTiempo eventos={eventos} />
+          <LineaTiempoTareas eventos={eventos} resultados={detalle.resultados} />
           <ul className="resultados">
             {detalle.resultados.map((r) => (
               <Resultado key={r.tarea} r={r} />
