@@ -369,8 +369,6 @@ main {
 
 /* Tarea: detalle de una tarea (#/tarea/<owner>/<repo>/<n>). */
 /* Los resúmenes de los <details> son puntos de toque: 44 px de alto mínimo. */
-.spec summary,
-.etapa summary,
 [data-testid="herramientas"] > summary {
   cursor: pointer;
   font-weight: 600;
@@ -397,35 +395,6 @@ main {
 }
 details[open] > .tarea-resumen .flecha {
   transform: rotate(180deg);
-}
-/* El pre hace scroll horizontal solo adentro: la línea larga no empuja la página. */
-.spec pre {
-  margin: 0 0 8px;
-  overflow-x: auto;
-  white-space: pre;
-  background: var(--fondo);
-  border: 1px solid var(--borde);
-  border-radius: 8px;
-  padding: 8px;
-}
-.etapa .lista-simple {
-  margin-top: 4px;
-}
-.etapa .lista-simple li {
-  color: var(--sub);
-}
-.paso-ok {
-  color: var(--ok);
-}
-.paso-falla {
-  color: var(--error);
-}
-/* El `.boton` existente no fija `display`: en un <a> inline el min-height no se aplica. */
-a.boton {
-  display: inline-block;
-  width: 100%;
-  text-decoration: none;
-  text-align: center;
 }
 
 /* Tarea: visor de diff (#/tarea/…). Los summaries son puntos de toque (44 px), como .spec/.etapa. */
@@ -479,8 +448,4 @@ a.boton {
 }
 .linea[data-tipo="del"] {
   background-color: color-mix(in srgb, var(--error) 18%, transparent);
-}
-/* Tarea: la nota del agente conserva los saltos de línea (sin markdown). */
-.nota-agente {
-  white-space: pre-wrap;
 }

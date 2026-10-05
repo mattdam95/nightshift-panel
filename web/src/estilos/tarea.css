@@ -1,0 +1,113 @@
+/* Tarea V2: barra de arriba, encabezado, números en bloques y secciones como listas agrupadas.
+   Todo va bajo .detalle-tarea para no pisar otras vistas que usan .numeros, .etapa o .lista-simple. */
+.tarea-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.tarea-ref {
+  margin: 0;
+  font-size: 13px;
+}
+.detalle-tarea .cabecera h1 {
+  margin: 2px 0 8px;
+  font-size: 28px;
+}
+.tarea-estado-fila {
+  display: flex;
+}
+.chip.est-ok {
+  color: var(--ok);
+}
+.chip.est-error {
+  color: var(--error);
+}
+.chip.est-acento {
+  color: var(--acento);
+}
+.chip.est-sub {
+  color: var(--sub);
+}
+
+.detalle-tarea .numeros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.detalle-tarea .numeros .tile {
+  padding: 10px 12px;
+}
+.detalle-tarea .numeros .tile-etiqueta {
+  font-size: 13px;
+  color: var(--sub);
+}
+.detalle-tarea .numeros .tile-valor {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* Spec: un grupo con un solo <details>; la flecha gira al abrir. */
+.detalle-tarea .spec summary,
+.detalle-tarea .etapa summary {
+  cursor: pointer;
+  list-style: none;
+}
+.detalle-tarea .spec summary::-webkit-details-marker,
+.detalle-tarea .etapa summary::-webkit-details-marker {
+  display: none;
+}
+.flecha-giro {
+  display: inline-flex;
+  color: var(--ter);
+  transition: transform 0.15s;
+}
+.spec[open] > summary .flecha-giro {
+  transform: rotate(180deg);
+}
+/* El pre hace scroll horizontal solo adentro: la línea larga no empuja la página. */
+.detalle-tarea .spec pre {
+  margin: 0;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.paso-fila {
+  justify-content: flex-start;
+}
+.comando-paso {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+
+.aviso-fila {
+  font-size: 15px;
+}
+
+/* La nota del agente conserva los saltos de línea (sin markdown). */
+.nota-agente {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  color: rgba(235, 235, 245, 0.85);
+}
+
+/* Eventos por etapa: nombre a la izquierda, cantidad y flecha a la derecha. */
+.eventos-der {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.detalle-tarea .etapa .lista-simple {
+  margin: 0;
+  padding: 0 16px 12px;
+}
+.detalle-tarea .etapa .lista-simple li {
+  color: var(--sub);
+}

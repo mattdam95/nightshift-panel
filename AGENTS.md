@@ -38,6 +38,9 @@ e2e/            Playwright (iPhone 15, Chromium). Corre el build real con PANEL_
   dentro de un mismo archivo, gana la regla que viene después. Con igual especificidad una clase base puede pisar a la tuya
   (pasó con `.boton-juego`/`.boton` y con `.capsula`/`.vidrio-amarillo`): subí la especificidad (`.vista-x .clase`) o poné
   la regla después, y escribí un test de `toHaveCSS` sobre el color que esperás.
+- **Clases de contenedor únicas por vista:** el CSS de todas las vistas va en un solo archivo compilado, así que dos vistas con
+  la misma clase raíz se pisan (`.tarea-v2` de En vivo y de Tarea ya chocó). Prefijá con el nombre de la vista (`.vivo-…`,
+  `.detalle-tarea`, `.noche-…`).
 - Textos de la UI en español rioplatense. Horas con `web/src/formato.ts`.
 - Rutas de archivos en tests: `fileURLToPath(new URL("...", import.meta.url))`, nunca `new URL(...).pathname`.
   Los fixtures se leen con rutas relativas a la raíz del repo (`test/fixtures/...`): vitest y Playwright corren desde ahí.

@@ -78,7 +78,7 @@ test("tarea: muestra título, estado, duración, turnos, tokens, pasos de verifi
 
   await expect(page.getByTestId("vista-tarea")).toBeVisible();
   await expect(page.getByTestId("tarea-titulo")).toHaveText("Reloj de la noche");
-  await expect(page.getByTestId("tarea-estado")).toContainText("lista");
+  await expect(page.getByTestId("tarea-estado")).toContainText("Lista");
   await expect(page.getByTestId("tarea-duracion")).toContainText("3 min 15 s");
   await expect(page.getByTestId("tarea-turnos")).toContainText("5");
   await expect(page.getByTestId("tarea-tokens")).toContainText(/1[.,]?110/);
@@ -92,7 +92,7 @@ test("tarea: muestra título, estado, duración, turnos, tokens, pasos de verifi
   await expect(pasos.nth(2)).toHaveAttribute("data-ok", "true");
   await expect(pasos.nth(2)).toContainText("pnpm test");
 
-  await expect(page.getByTestId("veredicto")).toContainText("aprobar");
+  await expect(page.getByTestId("veredicto")).toContainText("Aprobó");
   await expect(page.getByTestId("nota-agente")).toBeVisible();
   await expect(page.getByTestId("nota-agente")).toContainText("Solo toqué el reloj; nada más cambió.");
   await expect(page.getByTestId("avisos-tarea")).toBeVisible();
