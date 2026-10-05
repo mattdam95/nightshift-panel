@@ -17,3 +17,4 @@ index 5d6e7f8..9a0b1c2 100644
 +import { horaActual } from "./reloj";
 +console.log(saludar(), horaActual(new Date()));
  export {};
+```
