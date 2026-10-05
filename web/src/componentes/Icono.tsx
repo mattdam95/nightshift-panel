@@ -50,6 +50,18 @@ export function Icono({ nombre, tam = 24 }: { nombre: NombreIcono; tam?: number 
   );
 }
 
+/** Ícono de estado `interrumpida`; también es el de cualquier estado desconocido. */
+const RUTA_INTERRUMPIDA: { color: string; ruta: ReactNode } = {
+  color: "var(--sub)",
+  ruta: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M10 9v6" />
+      <path d="M14 9v6" />
+    </>
+  ),
+};
+
 /** Íconos de estado de las tareas: color (variables de estilos.css) y ruta de línea por estado. */
 export const RUTAS_ESTADO: Record<string, { color: string; ruta: ReactNode }> = {
   lista: {
@@ -79,16 +91,7 @@ export const RUTAS_ESTADO: Record<string, { color: string; ruta: ReactNode }> = 
       </>
     ),
   },
-  interrumpida: {
-    color: "var(--sub)",
-    ruta: (
-      <>
-        <circle cx="12" cy="12" r="10" />
-        <path d="M10 9v6" />
-        <path d="M14 9v6" />
-      </>
-    ),
-  },
+  interrumpida: RUTA_INTERRUMPIDA,
   error: {
     color: "var(--error)",
     ruta: (
@@ -103,7 +106,7 @@ export const RUTAS_ESTADO: Record<string, { color: string; ruta: ReactNode }> = 
 
 /** Ícono de línea del estado de una tarea; cualquier estado desconocido usa el de interrumpida. */
 export function IconoEstado({ estado, tam = 18 }: { estado: string; tam?: number }) {
-  const { color, ruta } = RUTAS_ESTADO[estado] ?? RUTAS_ESTADO.interrumpida;
+  const { color, ruta } = RUTAS_ESTADO[estado] ?? RUTA_INTERRUMPIDA;
   return (
     <svg
       width={tam}
