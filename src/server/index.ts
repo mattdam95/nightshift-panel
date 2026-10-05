@@ -9,6 +9,7 @@ import { Almacen } from "./almacen.js";
 import { accionSimulada, crearProveedorAcciones, type ProveedorAccion } from "./acciones.js";
 import { crearApp, type FuentePc } from "./app.js";
 import { crearProveedorCola, traerDeFixtures, traerDeGh } from "./cola.js";
+import { crearProveedorDiff, diffDeFixtures, diffDePr } from "./diff.js";
 import { Espejo, estadoPcDeSonda } from "./espejo.js";
 import { crearProveedorEstadisticas } from "./estadisticas.js";
 import { ejecutarEnMac, medirMac } from "./mac.js";
@@ -91,7 +92,18 @@ const accion: ProveedorAccion = espejoAccion
   ? crearProveedorAcciones({ nightshift: (a) => espejoAccion.nightshift(a), repos })
   : accionSimulada;
 
-const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas, tarea, accion, estadisticas });
+// Diff de la tarea: con espejo, el en curso sale de la PC y el de la PR de `gh`; sin espejo, fixtures.
+const diff =
+  !conEspejo && env.PANEL_FIXTURES
+    ? diffDeFixtures(env.PANEL_FIXTURES)
+    : crearProveedorDiff({
+        almacen,
+        tareaEnCurso: () => seguidor.estado.tarea?.id ?? null,
+        diffEnCurso: (c, b) => (espejo ? espejo.diffEnCurso(c, b) : Promise.reject(new Error("sin espejo"))),
+        diffPr: diffDePr(),
+      });
+
+const app = crearApp({ almacen, seguidor, pc, version, cola, maquinas, tarea, diff, accion, estadisticas });
 
 // SPA: los archivos del build de Vite, y cualquier otra ruta devuelve index.html (el router es del cliente).
 const web = join(raizProyecto, "dist", "web");
