@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { Evento } from "./eventos.js";
 import { parsearJsonl } from "./eventos.js";
-import { filasPorTarea, franjas, type Franja } from "./franjas.js";
+import { filasPorTarea, franjas, segmentoEn, segmentosLupa, type Franja, type SegmentoFila } from "./franjas.js";
 
 /**
  * Aceptación de `franjas()` (spec: Línea de tiempo de la noche (franjas por máquina)).
@@ -146,6 +146,57 @@ describe("filasPorTarea()", () => {
     expect(filas.map((f) => [f.tarea, f.segmentos.length])).toEqual([
       ["demo/panel#3", 6],
       ["demo/panel#5", 3],
+    ]);
+  });
+});
+
+/** Segmento inventado sobre el eje 0–100 (solo importan `izquierda` y `ancho`). */
+const seg100 = (izquierda: number, ancho: number): SegmentoFila => ({
+  etapa: "tests",
+  maquina: "pc",
+  desde: seg(0),
+  hasta: seg(0),
+  ms: 0,
+  izquierda,
+  ancho,
+});
+
+describe("segmentoEn()", () => {
+  const segmentos = [seg100(0, 20), seg100(20, 30), seg100(50, 0.1)];
+
+  it("devuelve el índice del segmento que contiene el punto", () => {
+    expect(segmentoEn(segmentos, 10)).toBe(0);
+    expect(segmentoEn(segmentos, 25)).toBe(1);
+  });
+
+  it("un segmento casi nulo se toma con un ancho mínimo de 0,6", () => {
+    expect(segmentoEn(segmentos, 50.4)).toBe(2);
+  });
+
+  it("si ningún segmento lo contiene, devuelve el de centro más cercano", () => {
+    expect(segmentoEn(segmentos, 80)).toBe(2);
+    expect(segmentoEn([seg100(10, 5), seg100(60, 5)], 30)).toBe(0);
+    expect(segmentoEn([seg100(10, 5), seg100(60, 5)], 45)).toBe(1);
+  });
+
+  it("si varios lo contienen (una revisión de la Mac sobre otra etapa), gana el último, que es el que se dibuja encima", () => {
+    expect(segmentoEn([seg100(10, 30), seg100(20, 5)], 22)).toBe(1);
+  });
+
+  it("sin segmentos devuelve -1", () => {
+    expect(segmentoEn([], 50)).toBe(-1);
+  });
+});
+
+describe("segmentosLupa()", () => {
+  it("con pct 50 y zoom 6, un segmento que empezaba en 50 queda en 50 y su ancho se multiplica por 6", () => {
+    expect(segmentosLupa([seg100(50, 5)], 50, 6)).toEqual([{ izquierda: 50, ancho: 30 }]);
+  });
+
+  it("izquierda = (izquierda − pct) × zoom + 50", () => {
+    expect(segmentosLupa([seg100(40, 2), seg100(55, 1)], 50, 6)).toEqual([
+      { izquierda: -10, ancho: 12 },
+      { izquierda: 80, ancho: 6 },
     ]);
   });
 });

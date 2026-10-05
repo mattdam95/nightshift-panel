@@ -52,9 +52,21 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+.pista-zona {
+  position: relative;
+}
 .pista-tarea {
   position: relative;
+  display: block;
+  width: 100%;
   height: 22px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 .segmento {
   position: absolute;
@@ -132,4 +144,98 @@
   width: 100%;
   min-height: 50px;
   font-size: 17px;
+}
+
+/* Lupa al mantener el dedo sobre la pista: aparece arriba del dedo y no recibe toques. */
+.cursor-lupa {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--texto);
+  z-index: 2;
+}
+.lupa {
+  position: absolute;
+  top: -66px;
+  width: 200px;
+  padding: 8px 10px;
+  border-radius: 22px;
+  pointer-events: none;
+  z-index: 5;
+}
+.lupa-pista {
+  position: relative;
+  height: 18px;
+}
+.lupa-segmento {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  border-radius: 999px;
+}
+.lupa-centro {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--texto);
+}
+.lupa-etiqueta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.lupa-punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.lupa-horas {
+  font-size: 11px;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Etapa elegida: resaltada en la pista y con su detalle debajo de las filas. */
+.segmento[data-seleccionado="true"] {
+  box-shadow:
+    0 0 0 2px var(--texto),
+    0 0 12px rgba(255, 255, 255, 0.55);
+  z-index: 1;
+}
+.seleccion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.seleccion-punto {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.seleccion-texto {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.seleccion-titulo {
+  font-size: 15px;
+  font-weight: 600;
+}
+.seleccion-detalle {
+  font-size: 13px;
+}
+.ayuda-lupa {
+  margin: 0;
+  font-size: 13px;
+  color: var(--sub);
 }
