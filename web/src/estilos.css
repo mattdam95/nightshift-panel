@@ -106,13 +106,6 @@ main {
   padding: 2rem 0;
 }
 
-/* Queda primera en la columna, debajo de la zona segura: sin sticky ni fixed. */
-.estado-conexion {
-  padding: 6px 16px;
-  font-size: 0.8rem;
-  background: var(--fondo);
-  border-bottom: 1px solid var(--borde);
-}
 .punto {
   display: inline-block;
   width: 8px;
@@ -464,30 +457,6 @@ main {
   background: var(--relleno);
   border-radius: 999px;
   overflow: hidden;
-}
-
-/* Última en la columna: sin position fixed, el flex la deja pegada abajo. */
-.pestanas {
-  flex: none;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  background: var(--tarjeta);
-  border-top: 1px solid var(--borde);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.pestanas a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  min-height: 56px;
-  justify-content: center;
-  font-size: 0.72rem;
-  color: var(--sub);
-  text-decoration: none;
-}
-.pestanas a[aria-current="page"] {
-  color: var(--acento);
 }
 
 /* Noche: línea de tiempo por máquina (SVG a mano). Ocupa el ancho disponible, nunca más:

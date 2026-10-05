@@ -8,6 +8,7 @@ import { Tarea } from "./vistas/Tarea";
 import { Vivo } from "./vistas/Vivo";
 import { Proximamente } from "./componentes/Proximamente";
 import { Icono } from "./componentes/Icono";
+import "./estilos/navegacion.css";
 
 /** Pestañas de la barra inferior. Las que no tienen vista todavía muestran "Próximamente" (las arman las issues `agent`). */
 const PESTANAS = [
@@ -28,9 +29,11 @@ export function App() {
   return (
     <div className="app">
       <div className="estado-conexion" data-testid="estado-conexion" data-stream={vivo.stream} data-pc={vivo.pc}>
-        <span className={`punto ${vivo.stream}`} />{" "}
-        {vivo.stream === "en-vivo" ? "En vivo" : vivo.stream === "conectando" ? "Conectando…" : "Reconectando…"}
-        <span className="sub"> · PC {vivo.pc === "sin-espejo" ? "(datos locales)" : vivo.pc}</span>
+        <span className="conexion-capsula vidrio">
+          <span className={`punto ${vivo.stream}`} />
+          {vivo.stream === "en-vivo" ? "En vivo" : vivo.stream === "conectando" ? "Conectando…" : "Reconectando…"}
+          <span className="sub"> · PC {vivo.pc === "sin-espejo" ? "(datos locales)" : vivo.pc}</span>
+        </span>
       </div>
 
       <div className="contenido" data-testid="contenido">
@@ -45,7 +48,7 @@ export function App() {
         </main>
       </div>
 
-      <nav className="pestanas" aria-label="Secciones">
+      <nav className="pestanas vidrio" aria-label="Secciones">
         {PESTANAS.map((p) => (
           <a
             key={p.vista}
@@ -53,7 +56,7 @@ export function App() {
             aria-current={ruta.vista === p.vista ? "page" : undefined}
             data-testid={`pestana-${p.vista}`}
           >
-            <Icono nombre={p.icono} />
+            <Icono nombre={p.icono} tam={25} grosor={ruta.vista === p.vista ? 2.2 : 1.8} />
             {p.nombre}
           </a>
         ))}
