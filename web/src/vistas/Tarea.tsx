@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DetalleTarea, ResultadoTarea } from "../../../src/contrato/api";
 import { agruparPorEtapa, pasosDeVerificacion } from "../../../src/contrato/tarea";
 import { Diff } from "../componentes/Diff";
@@ -14,8 +14,11 @@ export function Tarea({ params }: { params: string[] }) {
   const [diffTexto, setDiffTexto] = useState<string | null>(null);
   const [diffError, setDiffError] = useState<string | null>(null);
   const [diffPedido, setDiffPedido] = useState(false);
+  // Generación: cada cambio de tarea invalida las respuestas de diff en vuelo (mismo patrón de `vivo`).
+  const generacion = useRef(0);
 
   useEffect(() => {
+    generacion.current += 1;
     if (!valida) {
       setDetalle(null);
       setError("Tarea inválida");
@@ -43,9 +46,15 @@ export function Tarea({ params }: { params: string[] }) {
     if (!e.currentTarget.open) return;
     if (diffPedido || diffTexto !== null || diffError !== null) return;
     setDiffPedido(true);
+    // Si cambiamos de tarea antes de que llegue la respuesta, la generación ya cambió y se descarta.
+    const generacionActual = generacion.current;
     obtenerTexto(`/api/tareas/${encodeURIComponent(owner ?? "")}/${encodeURIComponent(repo ?? "")}/${n}/diff`)
-      .then((t) => setDiffTexto(t))
-      .catch((err: Error) => setDiffError(err.message));
+      .then((t) => {
+        if (generacionActual === generacion.current) setDiffTexto(t);
+      })
+      .catch((err: Error) => {
+        if (generacionActual === generacion.current) setDiffError(err.message);
+      });
   };
 
   return (
