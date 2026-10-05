@@ -124,7 +124,7 @@ export function Tarea({ params }: { params: string[] }) {
           </section>
 
           {resultado?.notaAgente && (
-            <p className="tarjeta" data-testid="nota-agente">
+            <p className="tarjeta nota-agente" data-testid="nota-agente">
               <span className="sub">Nota del agente: </span>
               {resultado.notaAgente}
             </p>
