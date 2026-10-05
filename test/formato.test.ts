@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fechaCorta, hora, horaCorta } from "../web/src/formato.js";
+import { fechaCorta, fechaLarga, hora, horaCorta } from "../web/src/formato.js";
 
 /**
  * Aceptación de los arreglos chicos (spec: Arreglos chicos — horas).
@@ -33,5 +33,23 @@ describe("fechaCorta: «Dom 27 sep» a partir de AAAA-MM-DD, sin zona horaria", 
     ["2026-09-29", "Mar 29 sep"],
   ])("%s → %s", (fecha, esperado) => {
     expect(fechaCorta(fecha)).toBe(esperado);
+  });
+});
+
+describe("fechaLarga: «Sábado 3 oct» a partir de AAAA-MM-DD, sin zona horaria", () => {
+  it.each([
+    ["2026-10-03", "Sábado 3 oct"],
+    ["2026-09-27", "Domingo 27 sep"],
+    ["2026-10-05", "Lunes 5 oct"],
+    ["2026-09-29", "Martes 29 sep"],
+    ["2026-09-30", "Miércoles 30 sep"],
+    ["2026-01-01", "Jueves 1 ene"],
+    ["2026-12-25", "Viernes 25 dic"],
+  ])("%s → %s", (fecha, esperado) => {
+    expect(fechaLarga(fecha)).toBe(esperado);
+  });
+
+  it("un texto que no es una fecha vuelve igual", () => {
+    expect(fechaLarga("ayer")).toBe("ayer");
   });
 });

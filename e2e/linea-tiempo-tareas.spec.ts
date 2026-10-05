@@ -29,7 +29,7 @@ test("v2 noche: la tarjeta va arriba de los resultados, con 6 etapas en la leyen
 
   const orden = await page.evaluate(() => {
     const linea = document.querySelector('[data-testid="linea-tiempo"]');
-    const lista = document.querySelector("ul.resultados");
+    const lista = document.querySelector('[data-testid="resultado"]');
     return linea && lista ? lista.compareDocumentPosition(linea) & Node.DOCUMENT_POSITION_PRECEDING : 0;
   });
   expect(orden).toBe(2);

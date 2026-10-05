@@ -34,3 +34,13 @@ export function fechaCorta(aaaammdd: string): string {
   const dia = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))).getUTCDay();
   return `${DIAS_CORTOS[dia]} ${Number(m[3])} ${MESES_CORTOS[Number(m[2]) - 1]}`;
 }
+
+const DIAS_LARGOS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+/** "2026-10-03" → "Sábado 3 oct". Como fechaCorta, sin zona horaria; un texto que no sea AAAA-MM-DD vuelve igual. */
+export function fechaLarga(aaaammdd: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(aaaammdd);
+  if (!m) return aaaammdd;
+  const dia = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))).getUTCDay();
+  return `${DIAS_LARGOS[dia]} ${Number(m[3])} ${MESES_CORTOS[Number(m[2]) - 1]}`;
+}

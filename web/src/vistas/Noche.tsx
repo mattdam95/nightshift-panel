@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import type { DetalleNoche, ResultadoTarea } from "../../../src/contrato/api";
 import type { Evento } from "../../../src/contrato/eventos";
+import { partirTarea } from "../../../src/contrato/eventos";
 import { obtener } from "../api";
-import { IconoEstado } from "../componentes/Icono";
+import { Icono, IconoEstado } from "../componentes/Icono";
 import { LineaTiempoTareas } from "../componentes/LineaTiempoTareas";
 import "../estilos/noche.css";
-import { duracion } from "../formato";
+import { duracion, fechaLarga, horaCorta } from "../formato";
 
 export function Noche({ params }: { params: string[] }) {
   const fecha = params[0] ?? "";
@@ -44,8 +45,17 @@ export function Noche({ params }: { params: string[] }) {
   return (
     <section className="vista" data-testid="vista-noche">
       <header className="cabecera">
-        <h1>Noche del {fecha}</h1>
-        {detalle?.fin === null && <p className="sub">En curso…</p>}
+        <div className="cabecera-volver">
+          <a href="#/historial" className="boton-redondo vidrio" aria-label="Volver al historial" data-testid="volver">
+            <Icono nombre="atras" tam={22} />
+          </a>
+        </div>
+        <h1>{fechaLarga(fecha)}</h1>
+        {detalle && (
+          <p className="subtitulo" data-testid="subtitulo-noche">
+            {subtitulo(detalle, eventos)}
+          </p>
+        )}
       </header>
 
       {error && (
@@ -58,7 +68,7 @@ export function Noche({ params }: { params: string[] }) {
       {detalle && (
         <>
           <LineaTiempoTareas eventos={eventos} resultados={detalle.resultados} />
-          <ul className="resultados">
+          <ul className="grupo">
             {detalle.resultados.map((r) => (
               <Resultado key={r.tarea} r={r} />
             ))}
@@ -68,6 +78,18 @@ export function Noche({ params }: { params: string[] }) {
       )}
     </section>
   );
+}
+
+/** «22:00 a 07:59 · 2 tareas»; sin eventos, solo «2 tareas»; con la noche abierta suma « · En curso». */
+function subtitulo(detalle: DetalleNoche, eventos: Evento[]): string {
+  const n = detalle.resultados.length;
+  const tareas = n === 1 ? "1 tarea" : `${n} tareas`;
+  const instantes = eventos.map((e) => Date.parse(e.ts)).filter(Number.isFinite);
+  const rango =
+    instantes.length > 0
+      ? `${horaCorta(new Date(Math.min(...instantes)).toISOString())} a ${horaCorta(new Date(Math.max(...instantes)).toISOString())} · `
+      : "";
+  return `${rango}${tareas}${detalle.fin === null ? " · En curso" : ""}`;
 }
 
 /**
@@ -82,31 +104,31 @@ function duracionDe(r: ResultadoTarea): string {
 }
 
 function Resultado({ r }: { r: ResultadoTarea }) {
+  const partes = partirTarea(r.tarea);
   return (
-    <li className="tarjeta" data-testid="resultado">
-      <div className="fila">
-        <strong>
-          <IconoEstado estado={r.estado} /> {r.tarea}
-        </strong>
-        <span className="sub">{r.estado}</span>
-      </div>
-      <p className="titulo-tarea">{r.titulo}</p>
-      <p className="resumen">
-        {duracionDe(r)} · {r.turnos} turnos · {r.tokens.toLocaleString("es-AR")} tokens
-      </p>
-      {r.pr && (
-        <p className="detalle-extra">
-          <a data-testid="link-pr" href={r.pr}>
+    <li className="resultado-v2" data-testid="resultado">
+      <IconoEstado estado={r.estado} tam={24} />
+      <div className="resultado-cuerpo">
+        <span className="sub resultado-etiqueta">
+          {partes ? `#${partes.numero}` : r.tarea} · {r.estado}
+        </span>
+        <span className="resultado-titulo">{r.titulo}</span>
+        <span className="sub resultado-resumen">
+          {duracionDe(r)} · {r.turnos} turnos · {r.tokens.toLocaleString("es-AR")} tokens
+        </span>
+        {r.pr && (
+          <a className="capsula vidrio-azul" data-testid="link-pr" href={r.pr}>
+            <Icono nombre="pr" tam={16} />
             Ver PR
           </a>
-        </p>
-      )}
-      {r.pregunta && (
-        <p className="pregunta">
-          <span className="sub">Pregunta del agente: </span>
-          <span data-testid="pregunta">{r.pregunta}</span>
-        </p>
-      )}
+        )}
+        {r.pregunta && (
+          <p className="tile resultado-pregunta">
+            <span className="sub">Pregunta del agente: </span>
+            <span data-testid="pregunta">{r.pregunta}</span>
+          </p>
+        )}
+      </div>
     </li>
   );
 }
@@ -134,7 +156,7 @@ function Reporte({ fecha }: { fecha: string }) {
   };
 
   return (
-    <div className="tarjeta reporte-bloque">
+    <div className="reporte-bloque">
       <button className="boton" data-testid="ver-reporte" onClick={ver}>
         Ver reporte
       </button>
