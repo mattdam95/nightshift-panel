@@ -132,12 +132,13 @@ export interface Maquinas {
   pc: {
     conexion: ConexionPc;
     gpu: { temperaturaC: number | null; potenciaW: number | null; vramUsadaGiB: number | null; vramTotalGiB: number | null } | null;
+    /** El llama-server de la PC: ejecutor y, desde el 2026-10-04, también revisor (`REVISOR_MAQUINA=pc`). */
     llm: MetricasLlm;
   };
+  /** La Mac coordina la noche y sirve el panel; ya no corre un revisor propio. */
   mac: {
     memoriaUsadaGiB: number | null;
     memoriaTotalGiB: number | null;
-    revisor: MetricasLlm;
   };
 }
 

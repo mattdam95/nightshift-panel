@@ -1,16 +1,12 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { medirMac, memoriaDeMac, parsearVmStat, type Ejecutar, type Pedir } from "./mac.js";
+import { medirMac, memoriaDeMac, parsearVmStat, type Ejecutar } from "./mac.js";
 
 // Los fixtures se leen con rutas relativas a la raíz del repo (desde donde corre vitest).
 const fixtureVmStat = readFileSync("test/fixtures/vm_stat.txt", "utf8");
 
-// Dobles de Ejecutar/Pedir: ningún comando real ni fetch real en los tests (el sandbox no tiene macOS ni red).
+// Doble de Ejecutar: ningún comando real en los tests (el sandbox no tiene macOS).
 const ejecutarConFixture: Ejecutar = async (comando) => (comando === "sysctl" ? "25769803776\n" : fixtureVmStat);
-const pedirCon =
-  (respuesta: { ok: boolean; status: number }): Pedir =>
-  async () =>
-    respuesta;
 
 describe("parsearVmStat", () => {
   it("devuelve tamPagina 16384 y las páginas del fixture, sin los dos puntos ni el punto final", () => {
@@ -51,74 +47,31 @@ describe("memoriaDeMac", () => {
 });
 
 describe("medirMac", () => {
-  it("llama a sysctl y a vm_stat, pide <revisorUrl>/health, y devuelve la memoria del fixture", async () => {
+  it("llama a sysctl y a vm_stat y devuelve la memoria del fixture", async () => {
     const ejecutados: [string, string[]][] = [];
-    const urls: string[] = [];
     const ejecutar: Ejecutar = async (comando, args) => {
       ejecutados.push([comando, args]);
       return comando === "sysctl" ? "25769803776\n" : fixtureVmStat;
     };
-    const pedir: Pedir = async (url) => {
-      urls.push(url);
-      return { ok: true, status: 200 };
-    };
-    const mac = await medirMac(ejecutar, pedir, "http://mi-mac:8081");
+    const mac = await medirMac(ejecutar);
     expect(ejecutados).toHaveLength(2);
     expect(ejecutados).toContainEqual(["sysctl", ["-n", "hw.memsize"]]);
     expect(ejecutados).toContainEqual(["vm_stat", []]);
-    expect(urls).toEqual(["http://mi-mac:8081/health"]);
-    expect(mac.memoriaUsadaGiB).toBe(13.7);
-    expect(mac.memoriaTotalGiB).toBe(24);
+    expect(mac).toEqual({ memoriaUsadaGiB: 13.7, memoriaTotalGiB: 24 });
   });
-  it("sin revisorUrl usa el por defecto: http://100.100.215.96:8081/health", async () => {
-    const urls: string[] = [];
-    const pedir: Pedir = async (url) => {
-      urls.push(url);
-      return { ok: true, status: 200 };
-    };
-    await medirMac(ejecutarConFixture, pedir);
-    expect(urls).toEqual(["http://100.100.215.96:8081/health"]);
+  it("ya no mide un revisor en la Mac: la respuesta solo trae la memoria", async () => {
+    expect(Object.keys(await medirMac(ejecutarConFixture)).sort()).toEqual(["memoriaTotalGiB", "memoriaUsadaGiB"]);
   });
-  it("si un ejecutar rechaza, la memoria queda en null, el resto sale igual y no se propaga la excepción", async () => {
-    const revisorOk = { salud: "ok", tokPorSegGeneracion: null, tokPorSegPrompt: null, peticionesEnCurso: null };
-    const ejecutarRoto: Ejecutar = async () => {
-      throw new Error("fallo del comando");
-    };
-    const mac = await medirMac(ejecutarRoto, pedirCon({ ok: true, status: 200 }));
-    expect(mac).toEqual({ memoriaUsadaGiB: null, memoriaTotalGiB: null, revisor: revisorOk });
-
-    const ejecutarSinVmStat: Ejecutar = async (comando) =>
-      comando === "vm_stat" ? Promise.reject(new Error("sin vm_stat")) : "25769803776\n";
-    const mac2 = await medirMac(ejecutarSinVmStat, pedirCon({ ok: true, status: 200 }));
-    expect(mac2.memoriaUsadaGiB).toBeNull();
-    expect(mac2.memoriaTotalGiB).toBeNull();
-    expect(mac2.revisor).toEqual(revisorOk);
-  });
-  it("revisor.salud: ok con { ok: true, status: 200 }, caido con { ok: false, status: 503 }, apagado si pedir rechaza", async () => {
-    const ok = await medirMac(ejecutarConFixture, pedirCon({ ok: true, status: 200 }));
-    expect(ok.revisor.salud).toBe("ok");
-    const caido = await medirMac(ejecutarConFixture, pedirCon({ ok: false, status: 503 }));
-    expect(caido.revisor.salud).toBe("caido");
-    const apagado = await medirMac(ejecutarConFixture, async () => {
-      throw new Error("sin red");
-    });
-    expect(apagado.revisor.salud).toBe("apagado");
-  });
-  it("los tok/s y peticiones en curso del revisor quedan en null por ahora", async () => {
-    const ok = await medirMac(ejecutarConFixture, pedirCon({ ok: true, status: 200 }));
-    expect(ok.revisor).toEqual({ salud: "ok", tokPorSegGeneracion: null, tokPorSegPrompt: null, peticionesEnCurso: null });
-    const apagado = await medirMac(ejecutarConFixture, async () => {
-      throw new Error("sin red");
-    });
-    expect(apagado.revisor).toEqual({ salud: "apagado", tokPorSegGeneracion: null, tokPorSegPrompt: null, peticionesEnCurso: null });
-  });
-  it("pasa un AbortSignal en opciones.signal a pedir", async () => {
-    let senalRecibida: unknown;
-    const pedir: Pedir = async (_url, opciones) => {
-      senalRecibida = opciones.signal;
-      return { ok: true, status: 200 };
-    };
-    await medirMac(ejecutarConFixture, pedir);
-    expect(senalRecibida).toBeInstanceOf(AbortSignal);
+  it("si un ejecutar rechaza o sysctl no da un número, la memoria queda en null y no se propaga la excepción", async () => {
+    const vacia = { memoriaUsadaGiB: null, memoriaTotalGiB: null };
+    expect(
+      await medirMac(async () => {
+        throw new Error("fallo del comando");
+      }),
+    ).toEqual(vacia);
+    expect(await medirMac(async (comando) => (comando === "vm_stat" ? Promise.reject(new Error("sin vm_stat")) : "25769803776\n"))).toEqual(
+      vacia,
+    );
+    expect(await medirMac(async (comando) => (comando === "sysctl" ? "nada\n" : fixtureVmStat))).toEqual(vacia);
   });
 });

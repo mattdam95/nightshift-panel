@@ -2,6 +2,10 @@
  * Contrato de `/srv/lab/logs/<fecha>/events.jsonl`, copiado de `nightshift/src/eventos.ts`.
  * La fuente de verdad es nightshift: si cambia allá, se actualiza acá (no al revés).
  */
+/**
+ * Máquina que emitió el evento. La revisión sale según `REVISOR_MAQUINA` de nightshift: `mac` en las noches
+ * hasta el 2026-10-04, `pc` desde entonces (el revisor corre en el mismo llama-server de la PC).
+ */
 export type Maquina = "pc" | "mac";
 export type Etapa = "noche" | "cola" | "preparacion" | "tests" | "implementacion" | "verificacion" | "revision" | "entrega" | "sistema";
 

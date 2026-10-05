@@ -20,7 +20,6 @@ describe("crearProveedorMaquinas", () => {
     const macDoble: Maquinas["mac"] = {
       memoriaUsadaGiB: 14.2,
       memoriaTotalGiB: 24,
-      revisor: { salud: "ok", tokPorSegGeneracion: 5.5, tokPorSegPrompt: 16, peticionesEnCurso: 0 },
     };
     const conSonda = await crearProveedorMaquinas({
       pc: async () => ({ sonda: sondaFixture, conexion: "conectada" }),
@@ -73,12 +72,8 @@ describe("crearProveedorMaquinas", () => {
     });
     const res = await proveedor();
     expect(res.mac).toEqual(MAC_VACIA);
-    // MAC_VACIA es la Mac sin datos: memoria null y revisor apagado con todo en null.
-    expect(res.mac).toEqual({
-      memoriaUsadaGiB: null,
-      memoriaTotalGiB: null,
-      revisor: { salud: "apagado", tokPorSegGeneracion: null, tokPorSegPrompt: null, peticionesEnCurso: null },
-    });
+    // MAC_VACIA es la Mac sin datos: memoria null (la Mac ya no tiene revisor propio).
+    expect(res.mac).toEqual({ memoriaUsadaGiB: null, memoriaTotalGiB: null });
   });
 });
 
@@ -137,7 +132,6 @@ describe("GET /api/maquinas", () => {
     expect(cuerpo.mac).toEqual({
       memoriaUsadaGiB: 14.2,
       memoriaTotalGiB: 24,
-      revisor: { salud: "ok", tokPorSegGeneracion: 5.5, tokPorSegPrompt: 16, peticionesEnCurso: 0 },
     });
     // Sin proveedor la ruta sigue respondiendo 501 (app.ts no se toca).
     expect((await crearApp({ almacen, seguidor }).request("/api/maquinas")).status).toBe(501);
