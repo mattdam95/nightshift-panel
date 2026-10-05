@@ -81,20 +81,17 @@ async function abrirMaquinas(page: import("@playwright/test").Page, maquinas: Ma
   await expect(page.getByTestId("maquina-mac")).toBeVisible();
 }
 
-test("maquinas: la barra de VRAM se ve (mínimo 4 px de alto) y su relleno ocupa 75 % del ancho", async ({ page }) => {
+test("maquinas: la VRAM se ve como un anillo (svg de 84 px) con el 75 % adentro", async ({ page }) => {
   await abrirMaquinas(page, MAQUINAS);
 
-  const barra = page.getByTestId("pc-vram-barra");
-  await expect(barra).toHaveCount(1);
-  const cajaBarra = (await barra.boundingBox()) ?? { width: 0, height: 0 };
-  expect(cajaBarra.height).toBeGreaterThanOrEqual(4);
-
-  const relleno = barra.locator(":scope > div");
-  await expect(relleno).toHaveCount(1);
-  const cajaRelleno = (await relleno.boundingBox()) ?? { width: 0 };
-  const fraccion = cajaRelleno.width / cajaBarra.width;
-  expect(fraccion).toBeGreaterThanOrEqual(0.73);
-  expect(fraccion).toBeLessThanOrEqual(0.77);
+  const anillo = page.getByTestId("pc-vram-barra");
+  await expect(anillo).toHaveCount(1);
+  const svg = anillo.locator("svg");
+  await expect(svg).toHaveCount(1);
+  const caja = (await svg.boundingBox()) ?? { width: 0, height: 0 };
+  expect(Math.abs(caja.width - 84)).toBeLessThanOrEqual(1);
+  expect(Math.abs(caja.height - 84)).toBeLessThanOrEqual(1);
+  await expect(anillo).toContainText("75%");
 });
 
 test("maquinas: en oscuro, el punto de salud «ok» es verde (var(--ok))", async ({ page }) => {

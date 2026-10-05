@@ -114,30 +114,6 @@ main {
 .punto.reconectando {
   background: var(--error);
 }
-/* Máquinas: barras de uso (VRAM de la PC, memoria de la Mac) y punto de salud del LLM. */
-.barra {
-  height: 6px;
-  margin: 8px 0;
-  border-radius: 999px;
-  overflow: hidden;
-  background: var(--borde);
-}
-.barra > div {
-  height: 100%;
-  background: var(--pc);
-}
-.salud {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.punto.salud-ok {
-  background: var(--ok);
-}
-.punto.salud-caido {
-  background: var(--error);
-}
-
 .tarjeta {
   border: 0;
   border-radius: 26px;
