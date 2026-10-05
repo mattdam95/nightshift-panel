@@ -443,3 +443,56 @@ a.boton {
 .barra-semana[data-vacia="true"] {
   background: var(--borde);
 }
+
+/* Tarea: visor de diff (#/tarea/…). Los summaries son puntos de toque (44 px), como .spec/.etapa. */
+.diff summary,
+.archivo summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* La línea larga scrollea adentro del bloque, nunca la página. */
+.tarjeta.diff,
+.tarjeta.archivo {
+  max-width: 100%;
+  min-width: 0;
+}
+.archivo .ruta {
+  overflow-wrap: anywhere;
+  flex: 1;
+  min-width: 0;
+}
+.archivo .num {
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+.archivo .mas {
+  color: var(--ok);
+}
+.archivo .menos {
+  color: var(--error);
+}
+.hunk {
+  margin: 4px 0 12px;
+}
+.hunk .encabezado {
+  color: var(--sub);
+  margin: 0 0 4px;
+}
+.lineas {
+  overflow-x: auto;
+  max-width: 100%;
+  min-width: 0;
+}
+.linea {
+  white-space: pre;
+}
+.linea[data-tipo="add"] {
+  background-color: color-mix(in srgb, var(--ok) 18%, transparent);
+}
+.linea[data-tipo="del"] {
+  background-color: color-mix(in srgb, var(--error) 18%, transparent);
+}
