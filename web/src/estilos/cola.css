@@ -1,0 +1,47 @@
+/* Cola V2: secciones como listas agrupadas de iOS, con el título a la izquierda y la cantidad a la derecha. */
+.cola-titulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.cola-titulo h2 {
+  margin: 8px 4px 8px;
+}
+.cantidad {
+  font-size: 15px;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+.cola-enlace {
+  color: var(--texto);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.item-titulo {
+  font-size: 17px;
+}
+.cola-item .ref,
+.cola-enlace .ref {
+  display: block;
+  font-size: 13px;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+.cola-flecha {
+  display: inline-flex;
+  flex: none;
+  color: var(--ter);
+}
+.pregunta-cola {
+  margin: 0 16px 12px;
+  border-left: 0;
+  font-size: 15px;
+}
+.cola-nada {
+  margin: 0;
+  padding: 18px 16px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--sub);
+}

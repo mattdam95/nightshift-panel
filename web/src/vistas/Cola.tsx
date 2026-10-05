@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Cola, ItemCola } from "../../../src/contrato/api";
 import { obtener } from "../api";
+import { Icono } from "../componentes/Icono";
+import "../estilos/cola.css";
 
 /** El `id` tiene la forma `owner/repo#N`: se corta en el último `#`. */
 function partesId(id: string): { repo: string; numero: string } {
@@ -11,15 +13,20 @@ function partesId(id: string): { repo: string; numero: string } {
 function ItemColaVista({ item }: { item: ItemCola }) {
   const { repo, numero } = partesId(item.id);
   return (
-    <li className="tarjeta cola-item" data-testid="item-cola">
-      <span className="mono ref">
-        #{numero} · {repo}
-      </span>
-      <a className="cola-enlace" data-testid="item-cola-enlace" href={item.url} target="_blank" rel="noopener noreferrer">
-        {item.titulo}
+    <li data-testid="item-cola">
+      <a className="grupo-fila cola-enlace" data-testid="item-cola-enlace" href={item.url} target="_blank" rel="noopener noreferrer">
+        <span className="fila-texto">
+          <span className="item-titulo">{item.titulo}</span>
+          <span className="sub ref">
+            #{numero} · {repo}
+          </span>
+        </span>
+        <span className="cola-flecha" aria-hidden="true">
+          <Icono nombre="derecha" tam={18} />
+        </span>
       </a>
       {item.pregunta && (
-        <p className="tarjeta destacada" data-testid="pregunta">
+        <p className="tile pregunta-cola" data-testid="pregunta">
           {item.pregunta}
         </p>
       )}
@@ -32,16 +39,18 @@ function SeccionCola({ testid, titulo, items }: { testid: string; titulo: string
     <section data-testid={testid}>
       <div className="cola-titulo">
         <h2>{titulo}</h2>
-        <span className="sub" data-testid="cantidad">
+        <span className="cantidad" data-testid="cantidad">
           {items.length}
         </span>
       </div>
       {items.length === 0 ? (
-        <p className="vacio" data-testid="nada">
-          Nada por acá
-        </p>
+        <div className="grupo">
+          <p className="cola-nada" data-testid="nada">
+            Nada por acá
+          </p>
+        </div>
       ) : (
-        <ul className="lista-cola">
+        <ul className="grupo">
           {items.map((item) => (
             <ItemColaVista key={item.id} item={item} />
           ))}
@@ -86,8 +95,8 @@ export function Cola(_props: { params: string[] }) {
       <header className="cabecera">
         <div className="fila">
           <h1>Cola</h1>
-          <button className="boton" data-testid="actualizar" disabled={cargando} onClick={cargar}>
-            Actualizar
+          <button className="boton-redondo vidrio" aria-label="Actualizar" data-testid="actualizar" disabled={cargando} onClick={cargar}>
+            <Icono nombre="recargar" tam={20} />
           </button>
         </div>
       </header>
