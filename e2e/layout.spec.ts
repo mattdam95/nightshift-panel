@@ -23,18 +23,18 @@ async function abrirHistorialLargo(page: Page): Promise<void> {
   await page.addStyleTag({ content: "main { min-height: 2000px; }" });
 }
 
-test("la barra de pestañas queda pegada abajo, antes y después del scroll del contenido", async ({ page }) => {
+test("la barra de pestañas flota 26 px por encima del borde de abajo, antes y después del scroll del contenido", async ({ page }) => {
   await abrirHistorialLargo(page);
   const alto = page.viewportSize()!.height;
 
-  // Antes de scrollear: el borde de abajo de la barra coincide con el alto del viewport.
-  expect(Math.abs((await bordeAbajoDeLaBarra(page)) - alto)).toBeLessThanOrEqual(1);
+  // Antes de scrollear: el borde de abajo de la barra queda 26 px por encima del alto del viewport.
+  expect(Math.abs(alto - (await bordeAbajoDeLaBarra(page)) - 26)).toBeLessThanOrEqual(1);
 
-  // Después de scrollear `contenido` hasta el final: sigue pegada abajo.
+  // Después de scrollear `contenido` hasta el final: sigue en el mismo lugar.
   await page.getByTestId("contenido").evaluate((el) => {
     el.scrollTop = el.scrollHeight;
   });
-  expect(Math.abs((await bordeAbajoDeLaBarra(page)) - alto)).toBeLessThanOrEqual(1);
+  expect(Math.abs(alto - (await bordeAbajoDeLaBarra(page)) - 26)).toBeLessThanOrEqual(1);
 });
 
 test("scrollear el contenido no mueve la página ni la barra de conexión", async ({ page }) => {
@@ -66,14 +66,14 @@ test("ni la barra de pestañas ni la barra de conexión usan position fija", asy
   expect(posConexion).not.toBe("sticky");
 });
 
-test("cada pestaña muestra un ícono SVG de 24 px y sin caracteres de relleno", async ({ page }) => {
+test("cada pestaña muestra un ícono SVG de 25 px y sin caracteres de relleno", async ({ page }) => {
   await page.goto("/#/historial");
   await expect(page.getByTestId("vista-historial")).toBeVisible();
 
   for (const vista of ["vivo", "cola", "historial", "maquinas"]) {
     const icono = page.getByTestId(`pestana-${vista}`).locator("svg");
     await expect(icono).toHaveCount(1);
-    expect(await icono.first().getAttribute("width")).toBe("24");
+    expect(await icono.first().getAttribute("width")).toBe("25");
   }
 
   const texto = await page.locator('nav[aria-label="Secciones"]').innerText();
