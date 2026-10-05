@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import type { EstadoPc, SnapshotVivo } from "../src/contrato/api.js";
-import { estadoInicial, type TareaTerminada } from "../src/contrato/vivo.js";
+import { estadoInicial, type NocheVivo, type TareaTerminada } from "../src/contrato/vivo.js";
 
 /**
  * Aceptación de los botones de acciones en la vista En vivo (spec: Acciones: botones y confirmación).
@@ -27,8 +27,10 @@ const terminada = (id: string, estado: string): TareaTerminada => ({
   fin: "2026-09-27T01:30:00.000Z",
 });
 
-const snapshot = (pausado: boolean, terminadas: TareaTerminada[] = []): SnapshotVivo => ({
-  vivo: { ...estadoInicial(), terminadas },
+const NOCHE_ACTIVA: NocheVivo = { inicio: "2026-09-27T01:00:00.000Z", hasta: null, activa: true };
+
+const snapshot = (pausado: boolean, terminadas: TareaTerminada[] = [], noche: NocheVivo | null = NOCHE_ACTIVA): SnapshotVivo => ({
+  vivo: { ...estadoInicial(), noche, terminadas },
   pc: "conectada",
   estadoPc: estadoPc(pausado),
   ultimoId: null,
@@ -57,7 +59,7 @@ async function confirmarAccion(page: Page, accion: string): Promise<void> {
   await page.getByTestId("confirmar-accion").click();
 }
 
-test("acciones: la fila muestra pausar y juego, y con la noche pausada se alterna a reanudar y juego", async ({ page }) => {
+test("acciones: pausar o reanudar en la tarjeta de acciones, y juego aparte", async ({ page }) => {
   let snap: SnapshotVivo = snapshot(false);
   await page.route("**/api/vivo", (route) => route.fulfill({ status: 200, contentType: "application/json", json: snap }));
   await page.route("**/api/stream*", (route) => route.abort());
@@ -66,9 +68,9 @@ test("acciones: la fila muestra pausar y juego, y con la noche pausada se altern
   await expect(page.getByTestId("estado-conexion")).toHaveAttribute("data-pc", "conectada");
   const acciones = page.getByTestId("acciones");
   await expect(acciones.getByTestId("accion-pausar")).toBeVisible();
-  await expect(acciones.getByTestId("accion-juego")).toBeVisible();
+  await expect(page.getByTestId("accion-juego")).toBeVisible();
   await expect(acciones.getByTestId("accion-pausar")).toHaveText("Pausar");
-  await expect(acciones.getByTestId("accion-juego")).toHaveText("Modo juego");
+  await expect(page.getByTestId("accion-juego")).toHaveText("Modo juego");
   await expect(acciones.getByTestId("accion-reanudar")).toHaveCount(0);
 
   // Otra carga, ahora con la noche pausada.
@@ -76,7 +78,7 @@ test("acciones: la fila muestra pausar y juego, y con la noche pausada se altern
   await page.reload();
   await expect(page.getByTestId("estado-conexion")).toHaveAttribute("data-pc", "conectada");
   await expect(acciones.getByTestId("accion-reanudar")).toBeVisible();
-  await expect(acciones.getByTestId("accion-juego")).toBeVisible();
+  await expect(page.getByTestId("accion-juego")).toBeVisible();
   await expect(acciones.getByTestId("accion-reanudar")).toHaveText("Reanudar");
   await expect(acciones.getByTestId("accion-pausar")).toHaveCount(0);
 });
@@ -146,7 +148,7 @@ test("acciones: mientras el pedido está en curso todo queda deshabilitado y no 
   // Mientras espera: la confirmación sigue visible con los botones deshabilitados.
   await expect(confirmacion.getByTestId("confirmar-accion")).toBeDisabled();
   await expect(confirmacion.getByTestId("cancelar-accion")).toBeDisabled();
-  await expect(page.getByTestId("acciones").getByTestId("accion-juego")).toBeDisabled();
+  await expect(page.getByTestId("accion-juego")).toBeDisabled();
   await expect(confirmacion).toContainText("Enviando…");
 
   await expect(page.getByTestId("resultado-accion")).toBeVisible();
@@ -239,7 +241,7 @@ test("acciones: abrir otra confirmación reemplaza la anterior y borra el result
   await expect(resultado).toContainText("(simulado) pausar");
 
   // Segunda confirmación (juego): reemplaza a la anterior y borra el resultado.
-  await page.getByTestId("acciones").getByTestId("accion-juego").click();
+  await page.getByTestId("accion-juego").click();
   const confirmacion = page.getByTestId("confirmacion");
   await expect(confirmacion).toHaveCount(1);
   await expect(confirmacion).toContainText("Modo juego");
@@ -261,7 +263,7 @@ test("acciones: a 375 px la confirmación abierta no causa scroll horizontal y l
 
   const botones = [
     page.getByTestId("acciones").getByTestId("accion-pausar"),
-    page.getByTestId("acciones").getByTestId("accion-juego"),
+    page.getByTestId("accion-juego"),
     page.getByTestId("confirmar-accion"),
     page.getByTestId("cancelar-accion"),
   ];
@@ -269,4 +271,91 @@ test("acciones: a 375 px la confirmación abierta no causa scroll horizontal y l
     await expect(boton).toBeVisible();
     expect((await boton.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
   }
+});
+
+test("acciones: sin noche no hay pausar, reanudar ni tarjeta de acciones, pero Modo juego sigue visible", async ({ page }) => {
+  await cargarVivo(page, snapshot(false, [], null));
+
+  await expect(page.getByTestId("accion-pausar")).toHaveCount(0);
+  await expect(page.getByTestId("accion-reanudar")).toHaveCount(0);
+  await expect(page.getByTestId("acciones")).toHaveCount(0);
+  await expect(page.getByTestId("accion-juego")).toBeVisible();
+  await expect(page.getByTestId("accion-juego")).toHaveText("Modo juego");
+});
+
+test("acciones: con noche activa pausar está dentro de la tarjeta, y con la noche pausada se alterna a reanudar", async ({ page }) => {
+  let snap: SnapshotVivo = snapshot(false);
+  await page.route("**/api/vivo", (route) => route.fulfill({ status: 200, contentType: "application/json", json: snap }));
+  await page.route("**/api/stream*", (route) => route.abort());
+  await page.goto("/#/vivo");
+  await expect(page.getByTestId("estado-conexion")).toHaveAttribute("data-pc", "conectada");
+  await expect(page.getByTestId("acciones").getByTestId("accion-pausar")).toBeVisible();
+  await expect(page.getByTestId("accion-reanudar")).toHaveCount(0);
+
+  snap = snapshot(true);
+  await page.reload();
+  await expect(page.getByTestId("estado-conexion")).toHaveAttribute("data-pc", "conectada");
+  await expect(page.getByTestId("acciones").getByTestId("accion-reanudar")).toBeVisible();
+  await expect(page.getByTestId("accion-pausar")).toHaveCount(0);
+});
+
+test("acciones: Modo juego está en la cabecera, con ícono, a la derecha y fuera de la tarjeta de acciones", async ({ page }) => {
+  await cargarVivo(page, snapshot(false));
+
+  const vista = page.getByTestId("vista-vivo");
+  const juego = vista.locator("> header").getByTestId("accion-juego");
+  await expect(juego).toBeVisible();
+  await expect(juego.locator("svg")).toHaveCount(1);
+  await expect(page.getByTestId("acciones").getByTestId("accion-juego")).toHaveCount(0);
+
+  const cajaVista = (await vista.boundingBox())!;
+  const cajaJuego = (await juego.boundingBox())!;
+  expect(cajaVista.x + cajaVista.width - (cajaJuego.x + cajaJuego.width)).toBeLessThanOrEqual(24);
+});
+
+test("acciones: Modo juego se ve en el color de acento (no pisado por .boton)", async ({ page }) => {
+  await cargarVivo(page, snapshot(false));
+
+  const juego = page.getByTestId("accion-juego");
+  // El color de acento tal como lo calcula el navegador, leído de una variable CSS.
+  const acento = await page.evaluate(() => {
+    const el = document.createElement("span");
+    el.style.color = "var(--acento)";
+    document.body.append(el);
+    const color = getComputedStyle(el).color;
+    el.remove();
+    return color;
+  });
+  await expect(juego).toHaveCSS("color", acento);
+  await expect(juego).toHaveCSS("border-top-color", acento);
+  await expect(juego).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+});
+
+test("acciones: Modo juego pide confirmación y manda el POST a /api/acciones/juego", async ({ page }) => {
+  const posts: string[] = [];
+  await page.route("**/api/acciones/*", (route) => {
+    posts.push(route.request().url());
+    return route.fulfill({ status: 200, contentType: "application/json", json: { ok: true, mensaje: "(simulado) juego" } });
+  });
+  await cargarVivo(page, snapshot(false));
+
+  await page.getByTestId("accion-juego").click();
+  await expect(page.getByTestId("confirmacion")).toContainText("Modo juego");
+  expect(posts).toHaveLength(0);
+  await page.getByTestId("confirmar-accion").click();
+
+  await expect(page.getByTestId("resultado-accion")).toContainText("(simulado) juego");
+  expect(posts).toHaveLength(1);
+  expect(posts[0]).toContain("/api/acciones/juego");
+});
+
+test("acciones: sin noche, Modo juego abre la confirmación dentro de la tarjeta de acciones", async ({ page }) => {
+  await cargarVivo(page, snapshot(false, [], null));
+  await expect(page.getByTestId("acciones")).toHaveCount(0);
+
+  await page.getByTestId("accion-juego").click();
+
+  const acciones = page.getByTestId("acciones");
+  await expect(acciones).toBeVisible();
+  await expect(acciones.getByTestId("confirmacion")).toContainText("Modo juego");
 });
