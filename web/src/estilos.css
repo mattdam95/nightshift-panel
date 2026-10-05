@@ -419,12 +419,33 @@ main {
 /* Tarea: detalle de una tarea (#/tarea/<owner>/<repo>/<n>). */
 /* Los resúmenes de los <details> son puntos de toque: 44 px de alto mínimo. */
 .spec summary,
-.etapa summary {
+.etapa summary,
+[data-testid="herramientas"] > summary {
   cursor: pointer;
   font-weight: 600;
   min-height: 44px;
   display: flex;
   align-items: center;
+}
+/* Tarjeta de la tarea en curso (En vivo): el resumen se pliega con la flecha a la derecha. */
+.tarea-resumen {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+}
+.tarea-resumen::-webkit-details-marker {
+  display: none;
+}
+.flecha {
+  margin-left: auto;
+  color: var(--sub);
+  transition: transform 0.15s;
+}
+details[open] > .tarea-resumen .flecha {
+  transform: rotate(180deg);
 }
 /* El pre hace scroll horizontal solo adentro: la línea larga no empuja la página. */
 .spec pre {

@@ -172,13 +172,16 @@ export function Vivo({ datos }: { datos: DatosVivo }) {
 function TareaEnCurso({ tarea, limite, ahora }: { tarea: TareaVivo; limite: Date | null; ahora: number }) {
   const actual = ETAPAS_TAREA.indexOf(tarea.etapa);
   return (
-    <div className="tarjeta destacada" data-testid="tarea-en-curso">
-      <div className="fila">
+    <details open className="tarjeta destacada" data-testid="tarea-en-curso">
+      <summary className="tarea-resumen">
         <strong data-testid="tarea-id">{tarea.id}</strong>
         <span className={`chip ${tarea.maquina}`} data-testid="tarea-maquina">
           {tarea.maquina === "mac" ? "Mac" : "PC"}
         </span>
-      </div>
+        <span className="flecha" aria-hidden="true">
+          ▾
+        </span>
+      </summary>
       {tarea.titulo && <p className="titulo-tarea">{tarea.titulo}</p>}
 
       <ol className="etapas" aria-label="Etapas">
@@ -231,14 +234,16 @@ function TareaEnCurso({ tarea, limite, ahora }: { tarea: TareaVivo; limite: Date
         </p>
       )}
 
-      <h2>Herramientas</h2>
-      <ul className="feed mono" data-testid="feed-herramientas">
-        {[...tarea.herramientas].reverse().map((h, i) => (
-          <li key={h.ts + i} className={h.error ? "error" : ""} data-testid="herramienta">
-            <span className="sub">{hora(h.ts)}</span> {h.nombre} · {h.resumen}
-          </li>
-        ))}
-      </ul>
-    </div>
+      <details data-testid="herramientas">
+        <summary>Herramientas ({tarea.herramientas.length})</summary>
+        <ul className="feed mono" data-testid="feed-herramientas">
+          {[...tarea.herramientas].reverse().map((h, i) => (
+            <li key={h.ts + i} className={h.error ? "error" : ""} data-testid="herramienta">
+              <span className="sub">{hora(h.ts)}</span> {h.nombre} · {h.resumen}
+            </li>
+          ))}
+        </ul>
+      </details>
+    </details>
   );
 }
