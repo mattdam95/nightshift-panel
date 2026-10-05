@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import type { DetalleTarea, ResultadoTarea } from "../../../src/contrato/api";
 import { agruparPorEtapa, pasosDeVerificacion } from "../../../src/contrato/tarea";
-import { obtener } from "../api";
+import { Diff } from "../componentes/Diff";
+import { obtener, obtenerTexto } from "../api";
 import { duracion, hora, ICONO_ESTADO, NOMBRE_ETAPA } from "../formato";
 
 export function Tarea({ params }: { params: string[] }) {
@@ -9,6 +10,10 @@ export function Tarea({ params }: { params: string[] }) {
   const valida = params.length === 3 && /^\d+$/.test(n ?? "");
   const [detalle, setDetalle] = useState<DetalleTarea | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // El diff se pide recién cuando se abre el bloque; se descarta todo al cambiar de tarea.
+  const [diffTexto, setDiffTexto] = useState<string | null>(null);
+  const [diffError, setDiffError] = useState<string | null>(null);
+  const [diffPedido, setDiffPedido] = useState(false);
 
   useEffect(() => {
     if (!valida) {
@@ -20,6 +25,9 @@ export function Tarea({ params }: { params: string[] }) {
     // Al cambiar de tarea se limpia lo anterior: error y datos viejos no comparten pantalla.
     setDetalle(null);
     setError(null);
+    setDiffTexto(null);
+    setDiffError(null);
+    setDiffPedido(false);
     obtener<DetalleTarea>(`/api/tareas/${encodeURIComponent(owner ?? "")}/${encodeURIComponent(repo ?? "")}/${n}`)
       .then((d) => vivo && setDetalle(d))
       .catch((e: Error) => vivo && setError(e.message));
@@ -29,6 +37,16 @@ export function Tarea({ params }: { params: string[] }) {
   }, [owner, repo, n, valida]);
 
   const resultado = detalle?.resultado ?? null;
+
+  // El `open` del <details> lo maneja el DOM: solo se pide la primera vez que se abre.
+  const alAbrirDiff = (e: React.SyntheticEvent<HTMLDetailsElement>) => {
+    if (!e.currentTarget.open) return;
+    if (diffPedido || diffTexto !== null || diffError !== null) return;
+    setDiffPedido(true);
+    obtenerTexto(`/api/tareas/${encodeURIComponent(owner ?? "")}/${encodeURIComponent(repo ?? "")}/${n}/diff`)
+      .then((t) => setDiffTexto(t))
+      .catch((err: Error) => setDiffError(err.message));
+  };
 
   return (
     <section className="vista" data-testid="vista-tarea">
@@ -129,6 +147,21 @@ export function Tarea({ params }: { params: string[] }) {
               </ul>
             </details>
           ))}
+
+          <details className="tarjeta diff" data-testid="diff-tarea" key={`${owner}/${repo}/${n}`} onToggle={alAbrirDiff}>
+            <summary>Cambios (diff)</summary>
+            {diffPedido && diffTexto === null && diffError === null && (
+              <p className="vacio" data-testid="diff-cargando">
+                Cargando…
+              </p>
+            )}
+            {diffTexto !== null && <Diff texto={diffTexto} />}
+            {diffError !== null && (
+              <p className="error-texto" data-testid="diff-error">
+                {diffError}
+              </p>
+            )}
+          </details>
         </>
       )}
     </section>
