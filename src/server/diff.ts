@@ -36,8 +36,9 @@ export function baseDeTarea(eventos: Evento[]): string | null {
  * (`diffPr`) si el resultado tiene `pr`. Un id inválido o una tarea que no aparece en ninguna
  * noche → `null` sin llamar a ninguna fuente.
  *
- * Caché por id de solo los éxitos (un error se vuelve a intentar): el diff en curso vence a los
- * `ttlEnCursoMs` (60 s por defecto); el de la PR no vence.
+ * Caché por id de solo los éxitos (un error se vuelve a intentar): cada entrada guarda de qué
+ * fuente salió el diff (`fuente`). Solo hay hit si la fuente guardada es la que corresponde ahora
+ * y, cuando es «en-curso», si todavía no venció (`ttlEnCursoMs`, 60 s por defecto); el de la PR no vence.
  */
 export function crearProveedorDiff(op: {
   almacen: Almacen;
@@ -49,8 +50,8 @@ export function crearProveedorDiff(op: {
 }): (id: string) => Promise<string | null> {
   const ahora = op.ahora ?? Date.now;
   const ttlEnCursoMs = op.ttlEnCursoMs ?? 60_000;
-  // `ts === null` marca el diff de la PR: no vence.
-  const cache = new Map<string, { diff: string; ts: number | null }>();
+  // `fuente` marca de dónde salió el diff: un hit exige la misma fuente que el pedido de ahora.
+  const cache = new Map<string, { diff: string; fuente: "en-curso" | "pr"; guardadoEn: number }>();
 
   return async (id) => {
     const carpeta = idCarpeta(id);
@@ -59,22 +60,25 @@ export function crearProveedorDiff(op: {
     if (ubicada === null) return null;
 
     let obtener: () => Promise<string>;
-    let sinVencimiento = false;
+    let fuente: "en-curso" | "pr";
     if (op.tareaEnCurso() === id) {
       const base = baseDeTarea(ubicada.eventos);
       if (base === null) return null;
       obtener = () => op.diffEnCurso(carpeta, base);
+      fuente = "en-curso";
     } else {
       const urlPr = ubicada.resultado?.pr ?? null;
       if (urlPr === null) return null;
       obtener = () => op.diffPr(urlPr);
-      sinVencimiento = true;
+      fuente = "pr";
     }
 
     const hit = cache.get(id);
-    if (hit !== undefined && (sinVencimiento || ahora() - hit.ts! < ttlEnCursoMs)) return hit.diff;
+    if (hit !== undefined && hit.fuente === fuente && (fuente === "pr" || ahora() - hit.guardadoEn < ttlEnCursoMs)) {
+      return hit.diff;
+    }
     const diff = await obtener(); // si rechaza, el error se propaga y no queda cacheado
-    cache.set(id, { diff, ts: sinVencimiento ? null : ahora() });
+    cache.set(id, { diff, fuente, guardadoEn: ahora() });
     return diff;
   };
 }
