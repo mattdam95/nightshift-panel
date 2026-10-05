@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { Evento } from "./eventos.js";
 import { parsearJsonl } from "./eventos.js";
-import { franjas } from "./franjas.js";
+import { filasPorTarea, franjas, type Franja } from "./franjas.js";
 
 /**
  * Aceptación de `franjas()` (spec: Línea de tiempo de la noche (franjas por máquina)).
@@ -73,5 +73,79 @@ describe("franjas() sin eventos de tarea (los eventos con tarea null se ignoran)
     const sinTarea: Evento[] = eventos.filter((e) => e.tarea === null);
     expect(sinTarea).not.toHaveLength(0); // el fixture sí los trae
     expect(franjas(sinTarea)).toEqual([]);
+  });
+});
+
+/** Segundos desde el epoch → ISO, para armar franjas inventadas con un eje de 0 a 1000 s. */
+const seg = (s: number) => new Date(s * 1000).toISOString();
+const franja = (tarea: string, etapa: Franja["etapa"], maquina: Franja["maquina"], desde: number, hasta: number): Franja => ({
+  tarea,
+  etapa,
+  maquina,
+  desde: seg(desde),
+  hasta: seg(hasta),
+});
+
+describe("filasPorTarea()", () => {
+  const entrada = [
+    franja("a/b#1", "tests", "pc", 0, 200),
+    franja("a/b#1", "revision", "mac", 200, 500),
+    franja("a/b#2", "preparacion", "pc", 500, 1000),
+  ];
+
+  it("arma una fila por tarea, en el orden en que aparece por primera vez", () => {
+    const filas = filasPorTarea(entrada, 0, 1_000_000);
+    expect(filas.map((f) => f.tarea)).toEqual(["a/b#1", "a/b#2"]);
+    expect(filas[0]!.segmentos).toHaveLength(2);
+    expect(filas[1]!.segmentos).toHaveLength(1);
+  });
+
+  it("desde y hasta de la fila son la primera y la última franja; ms es la diferencia", () => {
+    const [primera] = filasPorTarea(entrada, 0, 1_000_000);
+    expect(primera).toMatchObject({ desde: seg(0), hasta: seg(500), ms: 500_000 });
+  });
+
+  it("izquierda y ancho son porcentajes del rango [ini, fin]", () => {
+    const filas = filasPorTarea(entrada, 0, 1_000_000);
+    expect(filas[0]!.segmentos[0]).toMatchObject({ etapa: "tests", maquina: "pc", ms: 200_000, izquierda: 0, ancho: 20 });
+    expect(filas[0]!.segmentos[1]).toMatchObject({ etapa: "revision", maquina: "mac", ms: 300_000, izquierda: 20, ancho: 30 });
+    expect(filas[1]!.segmentos[0]).toMatchObject({ izquierda: 50, ancho: 50 });
+  });
+
+  it("un rango que no arranca en 0 desplaza la izquierda", () => {
+    const [fila] = filasPorTarea([franja("a/b#1", "tests", "pc", 600, 700)], 500_000, 1_500_000);
+    expect(fila!.segmentos[0]!.izquierda).toBeCloseTo(10);
+    expect(fila!.segmentos[0]!.ancho).toBeCloseTo(10);
+  });
+
+  it("con fin igual a ini, izquierda y ancho valen 0 en todos los segmentos", () => {
+    const filas = filasPorTarea(entrada, 0, 0);
+    for (const fila of filas) {
+      for (const s of fila.segmentos) expect(s).toMatchObject({ izquierda: 0, ancho: 0 });
+    }
+  });
+
+  it("una tarea cuyas franjas no son contiguas queda en la fila de su primera aparición", () => {
+    const filas = filasPorTarea(
+      [franja("a/b#1", "tests", "pc", 0, 100), franja("a/b#2", "tests", "pc", 100, 200), franja("a/b#1", "entrega", "pc", 200, 300)],
+      0,
+      300_000,
+    );
+    expect(filas.map((f) => f.tarea)).toEqual(["a/b#1", "a/b#2"]);
+    expect(filas[0]!.segmentos.map((s) => s.etapa)).toEqual(["tests", "entrega"]);
+    expect(filas[0]!.hasta).toBe(seg(300));
+  });
+
+  it("sin franjas devuelve una lista vacía", () => {
+    expect(filasPorTarea([], 0, 1000)).toEqual([]);
+  });
+
+  it("sobre el fixture del 2026-09-27 da dos filas: #3 con 6 segmentos y #5 con 3", () => {
+    const ts = eventos.map((e) => Date.parse(e.ts));
+    const filas = filasPorTarea(tramos, Math.min(...ts), Math.max(...ts));
+    expect(filas.map((f) => [f.tarea, f.segmentos.length])).toEqual([
+      ["demo/panel#3", 6],
+      ["demo/panel#5", 3],
+    ]);
   });
 });
