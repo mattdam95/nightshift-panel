@@ -89,7 +89,8 @@ test("colapsables: las herramientas arrancan cerradas, con el conteo en el resum
   await expect(herramientas).not.toHaveAttribute("open", /.*/);
   await expect(page.getByTestId("herramienta")).toHaveCount(2);
   await expect(page.getByTestId("herramienta").first()).not.toBeVisible();
-  await expect(page.locator('[data-testid="herramientas"] > summary')).toHaveText("Herramientas (2)");
+  await expect(page.locator('[data-testid="herramientas"] > summary')).toContainText("Herramientas");
+  await expect(page.getByTestId("herramientas-cantidad")).toHaveText("2");
 });
 
 test("colapsables: tocar el resumen de herramientas muestra las dos", async ({ page }) => {

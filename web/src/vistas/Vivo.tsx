@@ -189,18 +189,25 @@ export function Vivo({ datos }: { datos: DatosVivo }) {
 
 function TareaEnCurso({ tarea, limite, ahora }: { tarea: TareaVivo; limite: Date | null; ahora: number }) {
   const actual = ETAPAS_TAREA.indexOf(tarea.etapa);
+  const nombreEtapa = NOMBRE_ETAPA[tarea.etapa] ?? tarea.etapa;
+  const maxTurnos = tarea.presupuesto?.maxTurnos ?? 0;
+  const porcentajeTurnos = maxTurnos > 0 ? Math.min(100, Math.round((tarea.turnos / maxTurnos) * 100)) : 0;
   return (
-    <details open className="tarjeta destacada" data-testid="tarea-en-curso">
+    <details open className="tarjeta tarea-v2" data-testid="tarea-en-curso">
       <summary className="tarea-resumen">
-        <strong data-testid="tarea-id">{tarea.id}</strong>
+        <div className="tarea-resumen-texto">
+          <span className="mono sub" data-testid="tarea-id">
+            {tarea.id}
+          </span>
+          {tarea.titulo && <span className="tarea-titulo">{tarea.titulo}</span>}
+        </div>
         <span className={`chip ${tarea.maquina}`} data-testid="tarea-maquina">
           {tarea.maquina === "mac" ? "Mac" : "PC"}
         </span>
         <span className="flecha" aria-hidden="true">
-          ▾
+          <Icono nombre="abajo" tam={18} />
         </span>
       </summary>
-      {tarea.titulo && <p className="titulo-tarea">{tarea.titulo}</p>}
 
       <ol className="etapas" aria-label="Etapas">
         {ETAPAS_TAREA.map((e, i) => (
@@ -213,34 +220,55 @@ function TareaEnCurso({ tarea, limite, ahora }: { tarea: TareaVivo; limite: Date
           </li>
         ))}
       </ol>
+      {actual >= 0 && (
+        <p className="etapa-paso" data-testid="etapa-paso">
+          <span className="etapa-nombre">{nombreEtapa.charAt(0).toUpperCase() + nombreEtapa.slice(1)}</span>
+          <span className="sub">{` · paso ${actual + 1} de ${ETAPAS_TAREA.length}`}</span>
+        </p>
+      )}
 
       <dl className="numeros">
-        <div>
-          <dt>Transcurrido</dt>
-          <dd>{duracion(ahora - Date.parse(tarea.inicio))}</dd>
+        <div className="tile">
+          <dt className="tile-etiqueta">Transcurrido</dt>
+          <dd className="tile-valor">{duracion(ahora - Date.parse(tarea.inicio))}</dd>
         </div>
-        <div>
-          <dt>Queda</dt>
-          <dd data-testid="tiempo-restante">{limite ? duracion(limite.getTime() - ahora) : "—"}</dd>
-        </div>
-        <div>
-          <dt>Turnos</dt>
-          <dd data-testid="turnos">
-            {tarea.turnos}
-            {tarea.presupuesto ? ` / ${tarea.presupuesto.maxTurnos}` : ""}
+        <div className="tile">
+          <dt className="tile-etiqueta">Queda</dt>
+          <dd className="tile-valor" data-testid="tiempo-restante">
+            {limite ? duracion(limite.getTime() - ahora) : "—"}
           </dd>
         </div>
-        <div>
-          <dt>Tokens</dt>
-          <dd>{tarea.tokens.toLocaleString("es-AR")}</dd>
+        <div className="tile">
+          <dt className="tile-etiqueta">Turnos</dt>
+          <dd className="tile-valor" data-testid="turnos">
+            {tarea.turnos}
+            {tarea.presupuesto && <span className="turnos-max">{` / ${maxTurnos}`}</span>}
+            {tarea.presupuesto && (
+              <div
+                className="pista barra-turnos"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={porcentajeTurnos}
+                data-testid="turnos-barra"
+              >
+                <div style={{ width: `${porcentajeTurnos}%` }} />
+              </div>
+            )}
+          </dd>
+        </div>
+        <div className="tile">
+          <dt className="tile-etiqueta">Tokens</dt>
+          <dd className="tile-valor">{tarea.tokens.toLocaleString("es-AR")}</dd>
         </div>
       </dl>
 
       {tarea.verificacion.length > 0 && (
-        <ul className="lista-simple mono" data-testid="verificacion">
+        <ul className="grupo grupo-2" data-testid="verificacion">
           {tarea.verificacion.map((p, i) => (
-            <li key={i}>
-              {p.ok ? "✓" : "✗"} {p.comando}
+            <li key={i} className="grupo-fila">
+              <IconoEstado estado={p.ok ? "lista" : "bloqueada"} tam={20} />
+              <span className="mono comando">{p.comando}</span>
             </li>
           ))}
         </ul>
@@ -252,12 +280,25 @@ function TareaEnCurso({ tarea, limite, ahora }: { tarea: TareaVivo; limite: Date
         </p>
       )}
 
-      <details data-testid="herramientas">
-        <summary>Herramientas ({tarea.herramientas.length})</summary>
-        <ul className="feed mono" data-testid="feed-herramientas">
+      <details data-testid="herramientas" className="herramientas-v2">
+        <summary>
+          <span>Herramientas</span>
+          <span className="herramientas-der">
+            <span className="sub" data-testid="herramientas-cantidad">
+              {tarea.herramientas.length}
+            </span>
+            <span className="flecha-herr" aria-hidden="true">
+              <Icono nombre="abajo" tam={18} />
+            </span>
+          </span>
+        </summary>
+        <ul className="feed grupo grupo-2" data-testid="feed-herramientas">
           {[...tarea.herramientas].reverse().map((h, i) => (
             <li key={h.ts + i} className={h.error ? "error" : ""} data-testid="herramienta">
-              <span className="sub">{hora(h.ts)}</span> {h.nombre} · {h.resumen}
+              <span className={h.error ? "error-texto" : "sub"}>
+                {hora(h.ts)} · {h.nombre}
+              </span>
+              <span className="mono">{h.resumen}</span>
             </li>
           ))}
         </ul>

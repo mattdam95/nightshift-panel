@@ -81,3 +81,133 @@
 .grupo > details > summary {
   cursor: pointer;
 }
+
+/* Tarjeta de la tarea en curso (parte 2). Todo va bajo .tarea-v2 para no tocar otras vistas que usan .etapas, .numeros o .feed. */
+.tarea-v2 .tarea-resumen {
+  gap: 10px;
+}
+.tarea-resumen-texto {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.tarea-resumen-texto .mono {
+  font-size: 13px;
+}
+.tarea-titulo {
+  font-size: 17px;
+  font-weight: 600;
+}
+.tarea-v2 .tarea-resumen .flecha {
+  margin-left: 0;
+  color: var(--ter);
+  display: inline-flex;
+}
+
+/* Etapas: una barra de 6 segmentos; el nombre de cada etapa queda en el DOM pero no se ve. */
+.tarea-v2 .etapas {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+  margin: 12px 0 8px;
+}
+.tarea-v2 .etapas li {
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  font-size: 0;
+  background: var(--relleno);
+}
+.tarea-v2 .etapas li.hecha {
+  background: var(--ok);
+}
+.tarea-v2 .etapas li.actual {
+  background: var(--acento);
+  box-shadow: 0 0 10px rgba(255, 214, 10, 0.6);
+}
+.etapa-paso {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+.etapa-nombre {
+  color: var(--acento);
+  font-weight: 600;
+}
+
+/* Números: bloques de 2×2. */
+.tarea-v2 .numeros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.tarea-v2 .numeros .tile-etiqueta {
+  font-size: 13px;
+  color: var(--sub);
+}
+.tarea-v2 .numeros .tile-valor {
+  font-size: 22px;
+  font-weight: 700;
+}
+.turnos-max {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--sub);
+}
+.barra-turnos {
+  height: 6px;
+  margin-top: 8px;
+}
+.barra-turnos > div {
+  height: 100%;
+  background: var(--acento);
+}
+
+/* Verificación y herramientas: listas agrupadas con fondo más claro que el de la tarjeta. */
+.tarea-v2 .grupo-2 {
+  background: var(--tarjeta-2);
+  border-radius: 18px;
+  margin: 0 0 12px;
+}
+.comando {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+.herramientas-v2 > summary {
+  justify-content: space-between;
+  list-style: none;
+}
+.herramientas-v2 > summary::-webkit-details-marker {
+  display: none;
+}
+.herramientas-der {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.flecha-herr {
+  display: inline-flex;
+  color: var(--ter);
+  transition: transform 0.15s;
+}
+.herramientas-v2[open] > summary .flecha-herr {
+  transform: rotate(180deg);
+}
+.tarea-v2 .feed {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.tarea-v2 .feed li {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 16px;
+  border-bottom: 0;
+}
+.tarea-v2 .feed li > span {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
