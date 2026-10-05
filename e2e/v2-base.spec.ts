@@ -37,3 +37,21 @@ test("v2: el botón Actualizar de la cola es una cápsula de vidrio", async ({ p
   });
   expect(filtro).toContain("blur(24px)");
 });
+
+test("v2: una cápsula de vidrio amarilla o azul conserva su color (.capsula no lo pisa)", async ({ page }) => {
+  await page.goto("/#/cola");
+  await expect(page.getByTestId("actualizar")).toBeVisible();
+
+  const colores = await page.evaluate(() => {
+    const leer = (clases: string) => {
+      const el = document.createElement("button");
+      el.className = clases;
+      document.body.append(el);
+      const color = getComputedStyle(el).color;
+      el.remove();
+      return color;
+    };
+    return { amarillo: leer("capsula vidrio-amarillo"), azul: leer("capsula vidrio-azul"), normal: leer("capsula vidrio") };
+  });
+  expect(colores).toEqual({ amarillo: "rgb(255, 214, 10)", azul: "rgb(10, 132, 255)", normal: "rgb(255, 255, 255)" });
+});

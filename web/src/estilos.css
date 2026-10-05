@@ -379,24 +379,7 @@ main {
     inset 0 -1px 0 rgba(0, 0, 0, 0.25),
     0 10px 30px rgba(0, 0, 0, 0.45);
 }
-.vidrio-amarillo,
-.vidrio-azul {
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  backdrop-filter: blur(24px) saturate(180%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 8px 24px rgba(0, 0, 0, 0.4);
-}
-.vidrio-amarillo {
-  background: rgba(255, 214, 10, 0.16);
-  border: 1px solid rgba(255, 214, 10, 0.38);
-  color: var(--acento);
-}
-.vidrio-azul {
-  background: rgba(10, 132, 255, 0.16);
-  border: 1px solid rgba(10, 132, 255, 0.38);
-  color: var(--pc);
-}
+/* .capsula y .boton-redondo van antes que .vidrio-*: igual especificidad, gana el último (el color de los vidrios de color). */
 .capsula {
   display: inline-flex;
   align-items: center;
@@ -421,6 +404,24 @@ main {
   border-radius: 50%;
   cursor: pointer;
   color: var(--texto);
+}
+.vidrio-amarillo,
+.vidrio-azul {
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.vidrio-amarillo {
+  background: rgba(255, 214, 10, 0.16);
+  border: 1px solid rgba(255, 214, 10, 0.38);
+  color: var(--acento);
+}
+.vidrio-azul {
+  background: rgba(10, 132, 255, 0.16);
+  border: 1px solid rgba(10, 132, 255, 0.38);
+  color: var(--pc);
 }
 /* Lista agrupada de iOS: filas separadas por una línea fina. */
 .grupo {
