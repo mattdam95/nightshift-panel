@@ -43,13 +43,6 @@ type SemanaAcumulada = {
 /** Redondeo a 1 decimal: Math.round(x * 10) / 10. */
 const redondear1 = (x: number) => Math.round(x * 10) / 10;
 
-// Sobrecargas con literales: los tests de aceptación piden la semana por índice exacto
-// (p. ej. `est.semanas[2]`) y el proyecto compila con `noUncheckedIndexedAccess`, así que
-// con `semanas` literal el resultado se tipa como tupla de longitud exacta (sin `undefined`).
-export function calcularEstadisticas(noches: NocheConResultados[], semanas: 1, hoy: Date): { semanas: [Semana] };
-export function calcularEstadisticas(noches: NocheConResultados[], semanas: 2, hoy: Date): { semanas: [Semana, Semana] };
-export function calcularEstadisticas(noches: NocheConResultados[], semanas: 3, hoy: Date): { semanas: [Semana, Semana, Semana] };
-export function calcularEstadisticas(noches: NocheConResultados[], semanas: number, hoy: Date): Estadisticas;
 /**
  * Pura. Devuelve exactamente `semanas` elementos, de la más vieja a la actual, incluidas las
  * semanas sin tareas (con ceros). Las noches con fecha fuera del rango se ignoran.

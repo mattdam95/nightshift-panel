@@ -99,12 +99,12 @@ describe("calcularEstadisticas", () => {
 
     // Semana 09-28: A (10 min), B (20 min) y C (30 min); rondas (1 + 3 + 2) / 3 = 2.
     const ultima = est.semanas[2];
-    expect(ultima.tareas).toBe(3);
-    expect(ultima.listas).toBe(2);
-    expect(ultima.tasaExito).toBeCloseTo(2 / 3);
-    expect(ultima.minutosPromedio).toBe(20);
-    expect(ultima.rondasRevisionPromedio).toBe(2);
-    expect(ultima.kWh).toBeNull();
+    expect(ultima?.tareas).toBe(3);
+    expect(ultima?.listas).toBe(2);
+    expect(ultima?.tasaExito).toBeCloseTo(2 / 3);
+    expect(ultima?.minutosPromedio).toBe(20);
+    expect(ultima?.rondasRevisionPromedio).toBe(2);
+    expect(ultima?.kWh).toBeNull();
   });
 
   it("criterio 2: la semana actual se decide en hora de Argentina (2026-10-05T01:30Z todavía es domingo 4/10)", () => {
@@ -125,7 +125,7 @@ describe("calcularEstadisticas", () => {
     ];
     const [semana] = calcularEstadisticas(noches, 1, HOY).semanas;
     // (1 + 130/60) / 2 = 1.5833… → Math.round(1.5833… * 10) / 10 = 1.6
-    expect(semana.minutosPromedio).toBe(1.6);
+    expect(semana?.minutosPromedio).toBe(1.6);
   });
 
   it("criterio 3: fin inválido cuenta en tareas pero no en minutos; revisión no-disponible no entra en rondas", () => {
@@ -155,10 +155,10 @@ describe("calcularEstadisticas", () => {
       },
     ];
     const [semana] = calcularEstadisticas(noches, 1, HOY).semanas;
-    expect(semana.tareas).toBe(3);
-    expect(semana.minutosPromedio).toBe(1.6);
+    expect(semana?.tareas).toBe(3);
+    expect(semana?.minutosPromedio).toBe(1.6);
     // Solo entran las dos revisiones disponibles: (2 + 4) / 2 = 3.
-    expect(semana.rondasRevisionPromedio).toBe(3);
+    expect(semana?.rondasRevisionPromedio).toBe(3);
   });
 
   it("criterio 4: semanas=1 devuelve solo la semana actual; noches=[] con semanas=4 devuelve 4 semanas en ceros", () => {
