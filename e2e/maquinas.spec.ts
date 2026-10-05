@@ -8,7 +8,7 @@ import type { Maquinas } from "../src/contrato/api.js";
  * no dependen de la hora, de `gh` ni de otros specs (los e2e comparten un solo server).
  */
 
-/** El `Maquinas` de ejemplo de la spec: PC conectada (68 °C, 187 W, VRAM 12/16 GiB, llm ok a 29.63 tok/s), Mac (18,4 / 24 GiB, revisor ok). */
+/** El `Maquinas` de ejemplo de la spec: PC conectada (68 °C, 187 W, VRAM 12/16 GiB, llm ok a 29.63 tok/s), Mac (18,4 / 24 GiB). El revisor corre en la PC (mismo llm). */
 const MAQUINAS: Maquinas = {
   ts: "2026-09-27T02:14:10.000Z",
   pc: {
@@ -19,7 +19,6 @@ const MAQUINAS: Maquinas = {
   mac: {
     memoriaUsadaGiB: 18.4,
     memoriaTotalGiB: 24,
-    revisor: { salud: "ok", tokPorSegGeneracion: 5.5, tokPorSegPrompt: 16, peticionesEnCurso: 0 },
   },
 };
 
@@ -34,7 +33,6 @@ const SIN_DATOS: Maquinas = {
   mac: {
     memoriaUsadaGiB: null,
     memoriaTotalGiB: null,
-    revisor: { salud: "ok", tokPorSegGeneracion: null, tokPorSegPrompt: null, peticionesEnCurso: null },
   },
 };
 
@@ -47,10 +45,9 @@ async function abrirCon(page: Page, maquinas: Maquinas): Promise<void> {
   await expect(page.getByTestId("maquina-mac")).toBeVisible();
 }
 
-/** Cambia la salud del llm (campo `"llm"`) o del revisor (campo `"revisor"`). */
-function conSalud(maquinas: Maquinas, campo: "llm" | "revisor", salud: "ok" | "caido" | "apagado"): Maquinas {
-  if (campo === "llm") return { ...maquinas, pc: { ...maquinas.pc, llm: { ...maquinas.pc.llm, salud } } };
-  return { ...maquinas, mac: { ...maquinas.mac, revisor: { ...maquinas.mac.revisor, salud } } };
+/** Cambia la salud del llm de la PC (que hace de ejecutor y de revisor). */
+function conSalud(maquinas: Maquinas, campo: "llm", salud: "ok" | "caido" | "apagado"): Maquinas {
+  return { ...maquinas, pc: { ...maquinas.pc, [campo]: { ...maquinas.pc.llm, salud } } };
 }
 
 /** Cambia solo la temperatura de la GPU (para que el polling muestre un valor nuevo). */
@@ -97,25 +94,13 @@ test('salud-llm: con salud «apagado» dice «apagado» y data-salud="apagado"',
   await expect(salud).toHaveAttribute("data-salud", "apagado");
 });
 
-test('salud-revisor: con salud «ok» dice «ok» y data-salud="ok"', async ({ page }) => {
-  await abrirCon(page, conSalud(MAQUINAS, "revisor", "ok"));
-  const salud = page.getByTestId("salud-revisor");
-  await expect(salud).toContainText("ok");
-  await expect(salud).toHaveAttribute("data-salud", "ok");
-});
-
-test('salud-revisor: con salud «caido» dice «caído» y data-salud="caido"', async ({ page }) => {
-  await abrirCon(page, conSalud(MAQUINAS, "revisor", "caido"));
-  const salud = page.getByTestId("salud-revisor");
-  await expect(salud).toContainText("caído");
-  await expect(salud).toHaveAttribute("data-salud", "caido");
-});
-
-test('salud-revisor: con salud «apagado» dice «apagado» y data-salud="apagado"', async ({ page }) => {
-  await abrirCon(page, conSalud(MAQUINAS, "revisor", "apagado"));
-  const salud = page.getByTestId("salud-revisor");
-  await expect(salud).toContainText("apagado");
-  await expect(salud).toHaveAttribute("data-salud", "apagado");
+test("el revisor corre en la PC: la tarjeta PC rotula el llm como ejecutor y revisor, y la Mac no muestra un revisor propio", async ({
+  page,
+}) => {
+  await abrirCon(page, MAQUINAS);
+  await expect(page.getByTestId("maquina-pc")).toContainText("ejecutor y revisor");
+  await expect(page.getByTestId("salud-revisor")).toHaveCount(0);
+  await expect(page.getByTestId("maquina-mac")).toContainText("El revisor corre en la PC");
 });
 
 test("los valores null muestran «—», sin barras, y ninguna tarjeta muestra «null», «NaN» ni «undefined»", async ({ page }) => {

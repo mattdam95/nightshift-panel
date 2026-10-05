@@ -141,3 +141,20 @@ test("la noche del 2026-09-26 sigue mostrando su resultado y su reporte como ant
   await page.getByTestId("ver-reporte").click();
   await expect(page.getByTestId("reporte")).toContainText("# Noche del 2026-09-26");
 });
+
+test("noche con el revisor en la PC (desde el 2026-10-04): sin fila Mac y la revisión queda en la fila PC", async ({ page }) => {
+  // Mismos eventos del fixture, pero con la revisión registrada como `pc` (REVISOR_MAQUINA=pc en nightshift).
+  await page.route("**/api/noches/2026-09-27/eventos", async (route) => {
+    const original = await route.fetch();
+    const eventos = ((await original.json()) as { maquina: string }[]).map((e) => ({ ...e, maquina: "pc" }));
+    await route.fulfill({ json: eventos });
+  });
+  await page.goto("/#/noche/2026-09-27");
+  await expect(page.getByTestId("linea-tiempo")).toBeVisible();
+  await expect(page.getByTestId("fila-pc")).toBeVisible();
+  await expect(page.getByTestId("fila-mac")).toHaveCount(0);
+  const titulos = await page.getByTestId("fila-pc").locator("title").allTextContents();
+  expect(titulos.some((t) => t.includes("revisión"))).toBe(true);
+  const ancho = await page.evaluate(() => document.documentElement.scrollWidth);
+  expect(ancho).toBeLessThanOrEqual(page.viewportSize()!.width);
+});

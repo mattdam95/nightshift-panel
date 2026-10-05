@@ -91,7 +91,7 @@ function TarjetaPc({ pc }: { pc: Maquinas["pc"] }) {
       </dl>
       <Barra testid="pc-vram-barra" pct={pct} />
       <div className="fila">
-        <span className="sub">LLM</span>
+        <span className="sub">LLM (ejecutor y revisor)</span>
         <Salud testid="salud-llm" salud={pc.llm.salud} />
       </div>
     </article>
@@ -106,10 +106,7 @@ function TarjetaMac({ mac }: { mac: Maquinas["mac"] }) {
         <span data-testid="mac-memoria">{memoriaGiB(mac.memoriaUsadaGiB, mac.memoriaTotalGiB)}</span>
       </div>
       <Barra testid="mac-memoria-barra" pct={porcentaje(mac.memoriaUsadaGiB, mac.memoriaTotalGiB)} />
-      <div className="fila">
-        <span className="sub">Revisor</span>
-        <Salud testid="salud-revisor" salud={mac.revisor.salud} />
-      </div>
+      <p className="sub">Coordina la noche y sirve el panel. El revisor corre en la PC.</p>
     </article>
   );
 }

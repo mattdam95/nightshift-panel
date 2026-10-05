@@ -10,7 +10,7 @@ const COLOR_ETAPA: Record<Etapa, string> = {
   tests: "var(--sub)",
   implementacion: "var(--pc)",
   verificacion: "var(--acento)",
-  revision: "var(--mac)",
+  revision: "var(--mac)", // color de la etapa, no de la máquina: desde el 2026-10-04 la revisión corre en la PC
   entrega: "var(--ok)",
   noche: "var(--sub)",
   cola: "var(--sub)",
@@ -24,14 +24,19 @@ const X1 = 300; // fin de la línea (queda margen para la última marca)
 const FILA_ALTO = 46; // toques de 44 px de alto a 375 px de ancho de viewport
 const FILA_PC_Y = 36;
 const FILA_MAC_Y = FILA_PC_Y + FILA_ALTO + 6;
-const EJE_Y = FILA_MAC_Y + FILA_ALTO + 16;
-const ALTO = EJE_Y + 8;
 const COLUMNAS_LEYENDA = [6, 118, 230];
 const FILAS_LEYENDA = [2, 16];
 
 export function LineaTiempo({ eventos }: { eventos: Evento[] }): JSX.Element | null {
   const tramos = franjas(eventos);
   if (tramos.length === 0) return null;
+
+  // La fila Mac solo aparece si esa noche la Mac trabajó: hasta el 2026-10-04 revisaba ahí; desde
+  // entonces el revisor corre en la PC (`REVISOR_MAQUINA=pc`) y las noches nuevas no tienen franjas de la Mac.
+  const tramosMac = tramos.filter((f) => f.maquina === "mac");
+  const conMac = tramosMac.length > 0;
+  const ejeY = (conMac ? FILA_MAC_Y : FILA_PC_Y) + FILA_ALTO + 16;
+  const alto = ejeY + 8;
 
   const instantes = eventos.map((e) => Date.parse(e.ts)).filter(Number.isFinite);
   const ini = instantes.length > 0 ? Math.min(...instantes) : 0;
@@ -48,7 +53,7 @@ export function LineaTiempo({ eventos }: { eventos: Evento[] }): JSX.Element | n
   const xPorIndice = (i: number, n: number) => X0 + ((i + 0.5) / Math.max(n, 1)) * (X1 - X0);
 
   // Una entrada por etapa presente en la noche. En el fixture del 2026-09-27 hay
-  // las seis (la entrega de #3 corre en la PC, después de la revisión de la Mac),
+  // las seis (la entrega de #3 corre en la PC, después de la revisión, que en ese fixture es de la Mac),
   // que es lo que asume `e2e/linea-tiempo.spec.ts` (`toHaveCount(6)`).
   const etapasPresentes = ETAPAS_TAREA.filter((etapa) => tramos.some((f) => f.etapa === etapa));
   // Marcas equiespaciadas: la etiqueta usa `hora()`, que convierte la ISO (UTC) a la
@@ -62,7 +67,7 @@ export function LineaTiempo({ eventos }: { eventos: Evento[] }): JSX.Element | n
     <svg
       className="linea-tiempo"
       data-testid="linea-tiempo"
-      viewBox={`0 0 ${ANCHO} ${ALTO}`}
+      viewBox={`0 0 ${ANCHO} ${alto}`}
       role="img"
       aria-label="Línea de tiempo de la noche por máquina"
     >
@@ -77,18 +82,12 @@ export function LineaTiempo({ eventos }: { eventos: Evento[] }): JSX.Element | n
         xPorIndice={xPorIndice}
         sinRango={sinRango}
       />
-      <Fila
-        maquina="Mac"
-        color="var(--mac)"
-        y={FILA_MAC_Y}
-        tramos={tramos.filter((f) => f.maquina === "mac")}
-        xDe={xDe}
-        xPorIndice={xPorIndice}
-        sinRango={sinRango}
-      />
+      {conMac && (
+        <Fila maquina="Mac" color="var(--mac)" y={FILA_MAC_Y} tramos={tramosMac} xDe={xDe} xPorIndice={xPorIndice} sinRango={sinRango} />
+      )}
 
       {marcas.map((m) => (
-        <text key={m.x} data-testid="marca-tiempo" x={m.x} y={EJE_Y} textAnchor="middle" fontSize="9" fill="var(--sub)">
+        <text key={m.x} data-testid="marca-tiempo" x={m.x} y={ejeY} textAnchor="middle" fontSize="9" fill="var(--sub)">
           {m.etiqueta}
         </text>
       ))}

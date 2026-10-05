@@ -15,11 +15,10 @@ export interface FuentePc {
   conexion: ConexionPc;
 }
 
-/** Mac sin datos: memoria null y revisor apagado con todo en null. */
+/** Mac sin datos: memoria null. */
 export const MAC_VACIA: Maquinas["mac"] = {
   memoriaUsadaGiB: null,
   memoriaTotalGiB: null,
-  revisor: { salud: "apagado", tokPorSegGeneracion: null, tokPorSegPrompt: null, peticionesEnCurso: null },
 };
 
 /**

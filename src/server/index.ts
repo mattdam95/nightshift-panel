@@ -72,7 +72,7 @@ if (conEspejo) {
   };
   maquinas = crearProveedorMaquinas({
     pc: async () => ({ sonda: e.ultimaSonda, conexion: e.conexion }),
-    mac: () => medirMac(ejecutarEnMac, fetch),
+    mac: () => medirMac(ejecutarEnMac),
   });
   void espejo.iniciar();
 } else if (env.PANEL_FIXTURES) {
