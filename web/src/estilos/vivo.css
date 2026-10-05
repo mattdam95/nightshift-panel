@@ -1,0 +1,83 @@
+/* En vivo V2 (parte 1): encabezado, acciones de vidrio, estado vacío y listas agrupadas. */
+.cabecera-acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.cabecera-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+.subtitulo {
+  margin: 0;
+  font-size: 15px;
+  color: var(--sub);
+}
+.acciones-v2 {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.acciones-v2:has(.confirmacion),
+.acciones-v2:has(.resultado-accion) {
+  flex-basis: 100%;
+  align-items: stretch;
+}
+.acciones-v2 .confirmacion,
+.acciones-v2 .resultado-accion {
+  margin: 0;
+}
+.acciones-v2 .confirmacion .fila {
+  justify-content: flex-start;
+}
+
+.vacio-vivo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 36px 20px;
+  text-align: center;
+}
+.vacio-circulo {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--tarjeta-2);
+  color: var(--sub);
+}
+.vacio-titulo {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.fila-texto {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.fila-texto .sub {
+  font-size: 13px;
+}
+.fila-botones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.capsula-chica {
+  min-height: 36px;
+}
+.grupo > details > summary {
+  cursor: pointer;
+}

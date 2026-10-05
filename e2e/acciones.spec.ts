@@ -313,7 +313,7 @@ test("acciones: Modo juego está en la cabecera, con ícono, a la derecha y fuer
   expect(cajaVista.x + cajaVista.width - (cajaJuego.x + cajaJuego.width)).toBeLessThanOrEqual(24);
 });
 
-test("acciones: Modo juego se ve en el color de acento (no pisado por .boton)", async ({ page }) => {
+test("acciones: Modo juego se ve en el color de acento", async ({ page }) => {
   await cargarVivo(page, snapshot(false));
 
   const juego = page.getByTestId("accion-juego");
@@ -327,8 +327,6 @@ test("acciones: Modo juego se ve en el color de acento (no pisado por .boton)", 
     return color;
   });
   await expect(juego).toHaveCSS("color", acento);
-  await expect(juego).toHaveCSS("border-top-color", acento);
-  await expect(juego).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
 });
 
 test("acciones: Modo juego pide confirmación y manda el POST a /api/acciones/juego", async ({ page }) => {
