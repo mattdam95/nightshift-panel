@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import type { DetalleNoche, ResultadoTarea } from "../../../src/contrato/api";
 import type { Evento } from "../../../src/contrato/eventos";
 import { obtener } from "../api";
+import { IconoEstado } from "../componentes/Icono";
 import { LineaTiempo } from "../componentes/LineaTiempo";
-import { duracion, ICONO_ESTADO } from "../formato";
+import { duracion } from "../formato";
 
 export function Noche({ params }: { params: string[] }) {
   const fecha = params[0] ?? "";
@@ -84,7 +85,7 @@ function Resultado({ r }: { r: ResultadoTarea }) {
     <li className="tarjeta" data-testid="resultado">
       <div className="fila">
         <strong>
-          {ICONO_ESTADO[r.estado] ?? "•"} {r.tarea}
+          <IconoEstado estado={r.estado} /> {r.tarea}
         </strong>
         <span className="sub">{r.estado}</span>
       </div>

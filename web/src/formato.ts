@@ -15,8 +15,6 @@ export function duracion(ms: number): string {
   return `${s} s`;
 }
 
-export const ICONO_ESTADO: Record<string, string> = { lista: "✅", timeout: "⚠️", bloqueada: "⛔", interrumpida: "⏸️", error: "💥" };
-
 export const NOMBRE_ETAPA: Record<string, string> = {
   preparacion: "preparación",
   tests: "tests",
