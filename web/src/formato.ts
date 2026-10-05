@@ -1,9 +1,9 @@
 /** Formatos de fecha y duración para la UI (hora de Argentina, la del usuario). */
 const ZONA = "America/Argentina/Buenos_Aires";
 
-export const hora = (iso: string) => new Date(iso).toLocaleTimeString("es-AR", { hour12: false, timeZone: ZONA });
+export const hora = (iso: string) => new Date(iso).toLocaleTimeString("es-AR", { hourCycle: "h23", timeZone: ZONA });
 export const horaCorta = (iso: string) =>
-  new Date(iso).toLocaleTimeString("es-AR", { hour12: false, hour: "2-digit", minute: "2-digit", timeZone: ZONA });
+  new Date(iso).toLocaleTimeString("es-AR", { hourCycle: "h23", hour: "2-digit", minute: "2-digit", timeZone: ZONA });
 
 /** 3725000 → "1 h 02 min"; 95000 → "1 min 35 s". Negativo → "0 s". */
 export function duracion(ms: number): string {
