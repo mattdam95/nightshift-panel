@@ -11,14 +11,17 @@ const pc = (pausado: boolean): EstadoPc => ({
 });
 
 describe("accionesVisibles", () => {
-  it("noche no pausada: pausar y juego", () => {
-    expect(accionesVisibles(pc(false))).toEqual(["pausar", "juego"]);
+  it("noche pausada: reanudar", () => {
+    expect(accionesVisibles(pc(true), true)).toEqual(["reanudar"]);
   });
-  it("noche pausada: reanudar y juego", () => {
-    expect(accionesVisibles(pc(true))).toEqual(["reanudar", "juego"]);
+  it("noche activa sin pausa: pausar", () => {
+    expect(accionesVisibles(pc(false), true)).toEqual(["pausar"]);
   });
-  it("sin estado de la PC (null): pausar y juego", () => {
-    expect(accionesVisibles(null)).toEqual(["pausar", "juego"]);
+  it("sin noche: ningún botón", () => {
+    expect(accionesVisibles(pc(false), false)).toEqual([]);
+  });
+  it("sin estado de la PC (null) y con noche activa: pausar", () => {
+    expect(accionesVisibles(null, true)).toEqual(["pausar"]);
   });
 });
 

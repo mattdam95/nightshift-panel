@@ -96,6 +96,20 @@ main {
 .cabecera {
   padding-top: 8px;
 }
+.cabecera-acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.boton-juego {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border-color: var(--acento);
+  color: var(--acento);
+  font-weight: 600;
+}
 .vacio {
   color: var(--sub);
   text-align: center;

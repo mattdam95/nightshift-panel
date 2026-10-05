@@ -7,9 +7,13 @@ export const NOMBRE_ACCION: Record<Accion, string> = {
   reintentar: "Reintentar",
 };
 
-/** Botones de la fila general: ["reanudar", "juego"] si `estadoPc?.pausado === true`; en cualquier otro caso (también con null) ["pausar", "juego"]. */
-export function accionesVisibles(estadoPc: EstadoPc | null): Accion[] {
-  return estadoPc?.pausado === true ? ["reanudar", "juego"] : ["pausar", "juego"];
+/**
+ * Botones de la tarjeta de acciones: ["reanudar"] si `estadoPc?.pausado === true`; si no, ["pausar"] cuando hay una
+ * noche activa (`nocheActiva`, también con `estadoPc` null); y [] sin noche. "juego" no está acá: es un botón aparte, siempre visible.
+ */
+export function accionesVisibles(estadoPc: EstadoPc | null, nocheActiva: boolean): Accion[] {
+  if (estadoPc?.pausado === true) return ["reanudar"];
+  return nocheActiva ? ["pausar"] : [];
 }
 
 /** Texto de la confirmación. `tarea` solo se usa en reintentar. */
