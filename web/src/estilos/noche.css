@@ -85,3 +85,51 @@
   height: 10px;
   border-radius: 50%;
 }
+
+/* Noche V2: encabezado y resultados. */
+.cabecera-volver {
+  display: flex;
+  margin-bottom: 8px;
+}
+.resultado-v2 {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+}
+.resultado-v2 > svg {
+  flex: none;
+  margin-top: 2px;
+}
+.resultado-cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.resultado-etiqueta {
+  font-size: 13px;
+}
+.resultado-titulo {
+  font-size: 17px;
+  font-weight: 600;
+}
+.resultado-resumen {
+  font-size: 15px;
+}
+.resultado-cuerpo .capsula {
+  min-height: 36px;
+  margin-top: 4px;
+}
+.resultado-pregunta {
+  align-self: stretch;
+  margin: 4px 0 0;
+  font-size: 15px;
+}
+.reporte-bloque .boton {
+  width: 100%;
+  min-height: 50px;
+  font-size: 17px;
+}

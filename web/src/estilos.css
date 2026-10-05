@@ -184,26 +184,6 @@ main {
   color: var(--error);
 }
 
-/* Noche: un resultado por tarea. */
-.resultados {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.resumen {
-  margin: 4px 0 0;
-  color: var(--sub);
-  font-variant-numeric: tabular-nums;
-}
-.detalle-extra {
-  margin: 8px 0 0;
-}
-.pregunta {
-  margin: 8px 0 0;
-}
 /* Cápsula de vidrio: las propiedades de .capsula más las de .vidrio (los botones de hoy cambian solos). */
 .boton {
   display: inline-flex;
