@@ -101,15 +101,6 @@ main {
   justify-content: flex-end;
   margin-bottom: 8px;
 }
-.boton-juego {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border-color: var(--acento);
-  color: var(--acento);
-  font-weight: 600;
-}
 .vacio {
   color: var(--sub);
   text-align: center;
@@ -261,6 +252,16 @@ main {
   color: var(--texto);
   font: inherit;
   cursor: pointer;
+}
+/* Después de .boton: tienen la misma especificidad y el último gana. */
+.boton-juego {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border-color: var(--acento);
+  color: var(--acento);
+  font-weight: 600;
 }
 .reporte-bloque {
   display: flex;
